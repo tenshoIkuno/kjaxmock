@@ -1,0 +1,21 @@
+# 本番用
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: kjaxacr.azurecr.io/frontend:latest
+    depends_on:
+      - backend
+    ports:
+      - "8080:8080"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: kjaxacr.azurecr.io/backend:latest
+    env_file:
+      - backend/.env.prod 
+    ports:
+      - "8000:8000"

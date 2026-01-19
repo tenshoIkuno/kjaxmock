@@ -1,0 +1,9 @@
+# 参考: https://github.com/microsoft/vscode-dev-containers
+
+# すべてのテキストファイルをLFに統一
+* text=auto eol=lf
+
+# crlfである必要があるスクリプト類
+# ps1はlfで問題ない
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf

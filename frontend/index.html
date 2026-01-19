@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HomeBase</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Frontend mock interceptor: load for all hosts so the public site uses mock JSON files -->
+    <script>
+      try {
+        const s = document.createElement('script');
+        s.src = '/mock-interceptor.js';
+        s.defer = true;
+        document.head.appendChild(s);
+      } catch (e) { /* ignore */ }
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

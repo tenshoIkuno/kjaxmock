@@ -1,0 +1,88 @@
+variables:
+  FRONT_IMAGE: "$ACR_NAME.azurecr.io/frontend"
+  BACK_IMAGE: "$ACR_NAME.azurecr.io/backend"
+
+stages:
+  - build_push
+  - deploy
+
+# ────────── Frontend ──────────
+build_push_frontend:
+  stage: build_push
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+  script:
+    # VITE_*を埋め込むため環境変数ファイルの作成
+    - |
+      cat > frontend/.env <<EOF
+      VITE_API_BASE_URL=${VITE_API_BASE_URL}
+      EOF
+    # ファイルが正しく作成されたか確認
+    - test -s frontend/.env
+    # ACR認証
+    - echo "{\"auths\":{\"$ACR_NAME.azurecr.io\":{\"username\":\"$AZURE_CLIENT_ID\",\"password\":\"$AZURE_CLIENT_SECRET\"}}}" > /kaniko/.docker/config.json
+    # イメージのビルドとプッシュ
+    - /kaniko/executor
+      --context ./frontend
+      --dockerfile ./frontend/Dockerfile
+      --destination "$FRONT_IMAGE:$CI_COMMIT_SHORT_SHA"
+      --destination "$FRONT_IMAGE:latest"
+      --cache=true
+      --cache-ttl=48h
+      --cache-repo=$ACR_NAME.azurecr.io/cache
+  # mainブランチかつフロントエンドディレクトリに変更があった場合のみ実行
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - frontend/**/*
+
+deploy_frontend:
+  stage: deploy
+  image: mcr.microsoft.com/azure-cli
+  needs: [build_push_frontend]
+  script:
+    - az login --service-principal -u "$AZURE_CLIENT_ID" -p "$AZURE_CLIENT_SECRET" --tenant "$AZURE_TENANT_ID"
+    - az webapp config container set
+      --name "$AZURE_WEBAPP_FRONT"
+      --resource-group "$AZURE_RG"
+      --container-image-name "$FRONT_IMAGE:$CI_COMMIT_SHORT_SHA"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - frontend/**/*
+
+# ────────── Backend ──────────
+# 基本的にフロントエンドと同様
+build_push_backend:
+  stage: build_push
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+  script:
+    - echo "{\"auths\":{\"$ACR_NAME.azurecr.io\":{\"username\":\"$AZURE_CLIENT_ID\",\"password\":\"$AZURE_CLIENT_SECRET\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --context ./backend
+      --dockerfile ./backend/Dockerfile
+      --destination "$BACK_IMAGE:$CI_COMMIT_SHORT_SHA"
+      --destination "$BACK_IMAGE:latest"
+      --cache=true
+      --cache-ttl=48h
+      --cache-repo=$ACR_NAME.azurecr.io/cache
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - backend/**/*
+
+deploy_backend:
+  stage: deploy
+  image: mcr.microsoft.com/azure-cli
+  needs: [build_push_backend]
+  script:
+    - az login --service-principal -u "$AZURE_CLIENT_ID" -p "$AZURE_CLIENT_SECRET" --tenant "$AZURE_TENANT_ID"
+    - az webapp config container set
+      --name "$AZURE_WEBAPP_BACK"
+      --resource-group "$AZURE_RG"
+      --container-image-name "$BACK_IMAGE:$CI_COMMIT_SHORT_SHA"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - backend/**/*

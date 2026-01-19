@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Seed Mock localStorage</title>
+  <style>body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;margin:24px}button{margin:8px 0;padding:8px 12px}</style>
+</head>
+<body>
+  <h2>モックDBをlocalStorageに書き込む</h2>
+  <p>ボタンを押すと `public/*.json` のモックデータを localStorage の `mockdb:*:v1` キーにコピーします。</p>
+  <button id="seed">モックを書き込む（上書き）</button>
+  <button id="clear">mockdb をクリア</button>
+  <pre id="out"></pre>
+  <script>
+    const keys = {
+      tenants: { url: '/mock-tenants.json', key: 'mockdb:tenants:v1' },
+      clients: { url: '/mock-clients.json', key: 'mockdb:clients:v1' },
+      chats: { url: '/mock-chats.json', key: 'mockdb:chats:v1' },
+      users: { url: '/mock-users.json', key: 'mockdb:users:v1' },
+      dashboard: { url: '/dashboard-records.json', key: 'mockdb:dashboard-records:v1' },
+    };
+
+    const out = document.getElementById('out');
+    const log = (s) => out.textContent += s + '\n';
+
+    document.getElementById('seed').onclick = async () => {
+      out.textContent = '';
+      for (const k of Object.keys(keys)) {
+        try {
+          const info = keys[k];
+          log(`Fetching ${info.url} ...`);
+          const res = await fetch(info.url);
+          if (!res.ok) throw new Error(res.statusText || res.status);
+          const data = await res.json();
+          localStorage.setItem(info.key, JSON.stringify(data));
+          log(`Wrote ${info.key} (${Array.isArray(data) ? data.length : Object.keys(data).length})`);
+        } catch (e) {
+          log(`Error for ${k}: ${e.message}`);
+        }
+      }
+      log('Done. ページをリロードして UI を確認してください。');
+    };
+
+    document.getElementById('clear').onclick = () => {
+      out.textContent = '';
+      Object.values(keys).forEach(i => { localStorage.removeItem(i.key); log(`Removed ${i.key}`); });
+      log('Done.');
+    };
+  </script>
+</body>
+</html>

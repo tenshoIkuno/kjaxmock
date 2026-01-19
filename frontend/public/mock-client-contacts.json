@@ -1,0 +1,26 @@
+[
+  {
+    "id": "contact-1",
+    "tenant_id": "tenant-1",
+    "profile_id": "profile-1",
+    "name": "本社代表",
+    "manager_name": "山田太郎",
+    "phone_num": "03-1234-5678",
+    "mail_address": "taro@example.com",
+    "fax_num": "03-3000-0000",
+    "created_at": "2020-01-01T00:00:00Z",
+    "updated_at": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "contact-2",
+    "tenant_id": "tenant-2",
+    "profile_id": "profile-2",
+    "name": "営業部",
+    "manager_name": "佐藤花子",
+    "phone_num": "06-9876-5432",
+    "mail_address": "hanako@example.com",
+    "fax_num": "06-3000-0000",
+    "created_at": "2021-02-01T00:00:00Z",
+    "updated_at": "2024-02-01T00:00:00Z"
+  }
+]

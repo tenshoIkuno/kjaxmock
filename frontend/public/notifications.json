@@ -1,0 +1,32 @@
+[
+  {
+    "id": "alert_20251210_0001",
+    "tenantId": "tenant_abc",
+    "clientId": "client_123",
+    "type": "A1申告期限",
+    "ruleId": "A1",
+    "score": 92,
+    "severity": "critical",
+    "title": "申告期限が近づいています (2026-02-03)",
+    "summary": "音声から申告期限 2026-02-03 を検出。3週間前通知基準に合致。",
+    "detectedAt": "2025-12-10T08:12:00Z",
+    "read": false,
+    "assignedTo": null,
+    "evidence": {"transcript": "申告期限は2026年2月3日です。"}
+  },
+  {
+    "id": "alert_20251209_0002",
+    "tenantId": "tenant_abc",
+    "clientId": "client_456",
+    "type": "D16_資料不足",
+    "ruleId": "D16",
+    "score": 75,
+    "severity": "medium",
+    "title": "通帳が不足しています",
+    "summary": "音声から通帳が揃っていない旨を検出。資料回収が必要です。",
+    "detectedAt": "2025-12-09T11:05:00Z",
+    "read": false,
+    "assignedTo": "user_12",
+    "evidence": {"transcript": "通帳はまだ用意していません。"}
+  }
+]

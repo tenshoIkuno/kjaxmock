@@ -1,0 +1,102 @@
+{
+  "tenant-1": {
+    "id": "tenant-1",
+    "name": "顧問先1",
+    "users": [
+      {
+        "name": "担当 1郎",
+        "email": "tanto1@example.com"
+      }
+    ]
+  },
+  "tenant-2": {
+    "id": "tenant-2",
+    "name": "顧問先2",
+    "users": [
+      {
+        "name": "担当 2郎",
+        "email": "tanto2@example.com"
+      }
+    ]
+  },
+  "tenant-3": {
+    "id": "tenant-3",
+    "name": "顧問先3",
+    "users": [
+      {
+        "name": "担当 3郎",
+        "email": "tanto3@example.com"
+      }
+    ]
+  },
+  "tenant-4": {
+    "id": "tenant-4",
+    "name": "顧問先4",
+    "users": [
+      {
+        "name": "担当 4郎",
+        "email": "tanto4@example.com"
+      }
+    ]
+  },
+  "tenant-5": {
+    "id": "tenant-5",
+    "name": "顧問先5",
+    "users": [
+      {
+        "name": "担当 5郎",
+        "email": "tanto5@example.com"
+      }
+    ]
+  },
+  "tenant-6": {
+    "id": "tenant-6",
+    "name": "顧問先6",
+    "users": [
+      {
+        "name": "担当 6郎",
+        "email": "tanto6@example.com"
+      }
+    ]
+  },
+  "tenant-7": {
+    "id": "tenant-7",
+    "name": "顧問先7",
+    "users": [
+      {
+        "name": "担当 7郎",
+        "email": "tanto7@example.com"
+      }
+    ]
+  },
+  "tenant-8": {
+    "id": "tenant-8",
+    "name": "顧問先8",
+    "users": [
+      {
+        "name": "担当 8郎",
+        "email": "tanto8@example.com"
+      }
+    ]
+  },
+  "tenant-9": {
+    "id": "tenant-9",
+    "name": "顧問先9",
+    "users": [
+      {
+        "name": "担当 9郎",
+        "email": "tanto9@example.com"
+      }
+    ]
+  },
+  "tenant-10": {
+    "id": "tenant-10",
+    "name": "顧問先10",
+    "users": [
+      {
+        "name": "担当 10郎",
+        "email": "tanto10@example.com"
+      }
+    ]
+  }
+}
