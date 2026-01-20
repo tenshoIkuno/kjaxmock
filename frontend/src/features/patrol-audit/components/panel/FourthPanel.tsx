@@ -9,6 +9,7 @@ import {
   Textarea,
   TextInput,
 } from '@mantine/core';
+import TooltipHelpButton from '@/common/components/TooltipHelpButton';
 import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 
@@ -111,7 +112,15 @@ export const FourthPanel = () => {
         <ScrollArea h={240} scrollbarSize={8}>
           <Stack gap="sm" pr="sm">
             <Textarea
-              label="対応内容"
+              label={
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span>対応内容</span>
+                  <TooltipHelpButton
+                    tip="是正計画の具体的な対応内容を記載してください"
+                    size={16}
+                  />
+                </div>
+              }
               placeholder="対応内容を入力"
               minRows={3}
               value={description}
@@ -120,7 +129,15 @@ export const FourthPanel = () => {
             />
 
             <TextInput
-              label="期限"
+              label={
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span>期限</span>
+                  <TooltipHelpButton
+                    tip="対応の期限を入力してください（YYYY-MM-DD）"
+                    size={16}
+                  />
+                </div>
+              }
               placeholder="期限を選択"
               type="date"
               value={dueDate}
@@ -129,7 +146,15 @@ export const FourthPanel = () => {
             />
 
             <TextInput
-              label="担当"
+              label={
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span>担当</span>
+                  <TooltipHelpButton
+                    tip="対応担当者名を入力してください"
+                    size={16}
+                  />
+                </div>
+              }
               placeholder="担当者名などを入力"
               value={assignee}
               onChange={(e) => setAssignee(e.currentTarget.value)}

@@ -9,6 +9,7 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
+import TooltipHelpButton from '@/common/components/TooltipHelpButton';
 import { useForm } from '@mantine/form';
 
 export const ProfilePanel = () => {
@@ -80,16 +81,44 @@ export const ProfilePanel = () => {
         )}
 
         <TextInput
-          label="名前"
+          label={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>名前</span>
+              <TooltipHelpButton
+                tip="ユーザー表示名を入力してください（50文字以内推奨）"
+                size={18}
+              />
+            </div>
+          }
           placeholder="名前を入力"
           {...form.getInputProps('name')}
         />
 
-        <Input.Wrapper label="メール">
+        <Input.Wrapper
+          label={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>メール</span>
+              <TooltipHelpButton
+                tip="ログイン用のメールアドレス（変更不可項目）"
+                size={16}
+              />
+            </div>
+          }
+        >
           <Text size="sm">{form.values.email}</Text>
         </Input.Wrapper>
 
-        <Input.Wrapper label="アカウント作成日時">
+        <Input.Wrapper
+          label={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>アカウント作成日時</span>
+              <TooltipHelpButton
+                tip="アカウントが作成された日時（表示のみ）"
+                size={16}
+              />
+            </div>
+          }
+        >
           <Text size="sm">{form.values.created_at}</Text>
         </Input.Wrapper>
 

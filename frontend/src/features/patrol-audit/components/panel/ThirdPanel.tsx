@@ -10,6 +10,7 @@ import {
   Text,
   Textarea,
 } from '@mantine/core';
+import TooltipHelpButton from '@/common/components/TooltipHelpButton';
 import {
   IconChevronDown,
   IconChevronRight,
@@ -169,7 +170,15 @@ export const ThirdPanel = () => {
         <ScrollArea.Autosize mah={240}>
           <Stack gap="sm" pr="sm">
             <Select
-              label="重要度"
+              label={
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span>重要度</span>
+                  <TooltipHelpButton
+                    tip="報告の重要度を選択してください（高/中/低）"
+                    size={16}
+                  />
+                </div>
+              }
               placeholder="選択してください"
               data={['高', '中', '低']}
               value={importance}
@@ -178,7 +187,15 @@ export const ThirdPanel = () => {
             />
 
             <Textarea
-              label="内容"
+              label={
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span>内容</span>
+                  <TooltipHelpButton
+                    tip="発見した指摘の具体的な内容を入力してください"
+                    size={16}
+                  />
+                </div>
+              }
               placeholder="内容を入力"
               minRows={2}
               value={content}
@@ -187,7 +204,15 @@ export const ThirdPanel = () => {
             />
 
             <Textarea
-              label="根拠"
+              label={
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span>根拠</span>
+                  <TooltipHelpButton
+                    tip="指摘の根拠や参照資料を簡潔に入力してください"
+                    size={16}
+                  />
+                </div>
+              }
               placeholder="根拠を入力"
               minRows={2}
               value={reason}
@@ -195,7 +220,15 @@ export const ThirdPanel = () => {
             />
 
             <Textarea
-              label="影響"
+              label={
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span>影響</span>
+                  <TooltipHelpButton
+                    tip="発見事項が業務や財務に与える影響を記載してください"
+                    size={16}
+                  />
+                </div>
+              }
               placeholder="影響を入力"
               minRows={2}
               value={impact}
@@ -203,7 +236,15 @@ export const ThirdPanel = () => {
             />
 
             <Textarea
-              label="是正案"
+              label={
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span>是正案</span>
+                  <TooltipHelpButton
+                    tip="想定される改善策や対応案を入力してください"
+                    size={16}
+                  />
+                </div>
+              }
               placeholder="是正案を入力"
               minRows={2}
               value={correctiveAction}

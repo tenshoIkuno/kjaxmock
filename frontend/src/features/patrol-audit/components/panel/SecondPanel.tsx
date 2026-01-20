@@ -1,5 +1,6 @@
 import type { inputPatrolAudit } from '@/features/patrol-audit/types/patrolAudit';
 import { Box, Button, SimpleGrid, Stack, Text, TextInput } from '@mantine/core';
+import TooltipHelpButton from '@/common/components/TooltipHelpButton';
 import { IconCheck } from '@tabler/icons-react';
 
 const MAIN_OPTIONS = [
@@ -102,7 +103,15 @@ export const SecondPanel = ({ values, onChange }: SecondPanelProps) => {
       {/* その他の入力欄（「その他」マスが選択されたときだけ表示） */}
       {otherSelected && (
         <TextInput
-          label="その他の監査範囲"
+          label={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>その他の監査範囲</span>
+              <TooltipHelpButton
+                tip="選択肢にない項目を自由入力してください"
+                size={16}
+              />
+            </div>
+          }
           placeholder="例）助成金の申請状況　など"
           value={otherText}
           onChange={(event) =>

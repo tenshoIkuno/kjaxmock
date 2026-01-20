@@ -1,6 +1,7 @@
 import { NewPasswordInput } from '@/features/settings/components/PasswordPanel/NewPasswordInput';
 import { useUpdatePassword } from '@/features/settings/hooks/useUsers';
 import { Button, PasswordInput, Stack, Text } from '@mantine/core';
+import TooltipHelpButton from '@/common/components/TooltipHelpButton';
 import { useForm } from '@mantine/form';
 import { useRef } from 'react';
 
@@ -76,7 +77,15 @@ export const PasswordPanel = () => {
 
         {/* 現在のパスワード欄 */}
         <PasswordInput
-          label="現在のパスワード"
+          label={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>現在のパスワード</span>
+              <TooltipHelpButton
+                tip="現在のパスワードを入力してください"
+                size={14}
+              />
+            </div>
+          }
           ref={currentRef}
           withAsterisk
           placeholder="現在のパスワード"
@@ -106,7 +115,15 @@ export const PasswordPanel = () => {
 
         {/* 新しいパスワード（確認用）欄 */}
         <PasswordInput
-          label="新しいパスワード（確認）"
+          label={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>新しいパスワード（確認）</span>
+              <TooltipHelpButton
+                tip="もう一度新しいパスワードを入力してください"
+                size={14}
+              />
+            </div>
+          }
           ref={confirmRef}
           withAsterisk
           placeholder="もう一度入力"

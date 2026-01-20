@@ -4,8 +4,9 @@ import { MessageInput } from '@/features/chat/components/MessageInput';
 import { useChat } from '@/features/chat/hooks/useChat';
 import { useChatStream } from '@/features/chat/hooks/useMessage';
 import { useChatStore } from '@/features/chat/store/chatStore';
-import { Box, Flex, Button } from '@mantine/core';
-import Onboarding from '@/common/components/Onboarding';
+import { Box, Flex, Button, Group } from '@mantine/core';
+import { openOnboarding } from '@/common/components/Onboarding/controller';
+import { openProductTour } from '@/common/components/ProductTour/controller';
 
 export function ChatPage() {
   // useChatStoreから、現在選択されているchatIdを取得
@@ -39,9 +40,19 @@ export function ChatPage() {
 
   return (
     <Flex direction="column" gap={0} style={{ flex: 1, minHeight: 0 }}>
-      <Onboarding page="チャット" />
       <div style={{ padding: 8 }}>
-        <Button size="xs">パターン１</Button>
+        <Group>
+          <Button size="xs" onClick={() => openOnboarding('チャット')}>
+            パターン１
+          </Button>
+          <Button
+            size="xs"
+            variant="outline"
+            onClick={() => openProductTour('チャット')}
+          >
+            パターン３
+          </Button>
+        </Group>
       </div>
       {currentChatId ? (
         <ChatWindow

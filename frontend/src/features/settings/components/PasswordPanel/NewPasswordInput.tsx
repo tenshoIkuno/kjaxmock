@@ -8,6 +8,7 @@ import {
   Text,
   Tooltip,
 } from '@mantine/core';
+import TooltipHelpButton from '@/common/components/TooltipHelpButton';
 import { IconCheck, IconHelp, IconX } from '@tabler/icons-react';
 import { forwardRef, useState } from 'react';
 
@@ -80,7 +81,15 @@ export const NewPasswordInput = forwardRef<
             onBlurCapture={() => setPopoverOpened(false)}
           >
             <PasswordInput
-              label="新しいパスワード"
+              label={
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span>新しいパスワード</span>
+                  <TooltipHelpButton
+                    tip="8文字以上、文字種3種類以上を満たすパスワードを設定してください"
+                    size={14}
+                  />
+                </div>
+              }
               ref={ref}
               withAsterisk
               placeholder="新しいパスワード"

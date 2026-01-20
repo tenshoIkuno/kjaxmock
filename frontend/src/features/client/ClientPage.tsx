@@ -23,6 +23,8 @@ import {
   Divider,
   ActionIcon,
 } from '@mantine/core';
+import TooltipHelpButton from '@/common/components/TooltipHelpButton';
+import { openOnboarding } from '@/common/components/Onboarding/controller';
 import { useForm } from '@mantine/form';
 import { useUpdateClient } from '@/features/client/hooks/useClient';
 import {
@@ -244,11 +246,68 @@ export const ClientPage = () => {
         onSubmit={handleSubmit}
         style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
       >
-        <TextInput label="顧問先名" {...form.getInputProps('name')} required />
-        <TextInput label="住所" {...form.getInputProps('address')} />
-        <TextInput label="電話番号" {...form.getInputProps('phone')} />
-        <TextInput label="メール" {...form.getInputProps('email')} />
-        <Textarea label="備考" {...form.getInputProps('note')} minRows={4} />
+        <TextInput
+          label={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>顧問先名</span>
+              <TooltipHelpButton
+                tip="顧問先の正式名称を入力してください"
+                size={18}
+              />
+            </div>
+          }
+          {...form.getInputProps('name')}
+          required
+        />
+        <TextInput
+          label={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>住所</span>
+              <TooltipHelpButton
+                tip="所在地を入力してください（建物名等も可）"
+                size={18}
+              />
+            </div>
+          }
+          {...form.getInputProps('address')}
+        />
+        <TextInput
+          label={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>電話番号</span>
+              <TooltipHelpButton
+                tip="市外局番からの電話番号を入力してください（ハイフン可）"
+                size={18}
+              />
+            </div>
+          }
+          {...form.getInputProps('phone')}
+        />
+        <TextInput
+          label={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>メール</span>
+              <TooltipHelpButton
+                tip="顧問先の代表メールアドレスを入力してください"
+                size={18}
+              />
+            </div>
+          }
+          {...form.getInputProps('email')}
+        />
+        <Textarea
+          label={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>備考</span>
+              <TooltipHelpButton
+                tip="補足情報や注意点を自由に記入してください"
+                size={18}
+              />
+            </div>
+          }
+          {...form.getInputProps('note')}
+          minRows={4}
+        />
 
         <Group position="apart" mt="auto">
           <Button variant="default" onClick={onClose}>
@@ -270,13 +329,30 @@ export const ClientPage = () => {
       filterArea={filterAreaNode}
       actionButton={
         <Group style={{ justifyContent: 'flex-start' }}>
+          <Button size="sm" onClick={() => openOnboarding('顧問先')}>
+            パターン１
+          </Button>
           <Button
             size="sm"
+            variant="outline"
             onClick={() => {
-              /* パターン１ 起動 */
+              try {
+                // lazy import controller to avoid circular issues
+                const {
+                  openProductTour,
+                } = require('@/common/components/ProductTour/controller');
+                openProductTour('顧問先');
+              } catch (e) {
+                // fallback: dispatch event directly
+                window.dispatchEvent(
+                  new CustomEvent('openProductTour', {
+                    detail: { page: '顧問先' },
+                  }),
+                );
+              }
             }}
           >
-            パターン１
+            パターン３
           </Button>
         </Group>
       }
@@ -294,6 +370,7 @@ export const ClientPage = () => {
             display: 'flex',
             flexDirection: 'column',
             gap: 12,
+            overflow: 'auto',
           }}
         >
           {/* 上部タイトル領域 */}
@@ -369,6 +446,7 @@ export const ClientPage = () => {
               minHeight: 0,
               display: 'flex',
               flexDirection: 'column',
+              overflow: 'auto',
             }}
           >
             <Tabs
@@ -399,30 +477,60 @@ export const ClientPage = () => {
                   <Text weight={700}>顧問先マスタ</Text>
                   <Grid mt="sm">
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">
-                        テナントID
-                      </Text>
-                      <TextInput {...editForm.getInputProps('tenant_id')} />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">
-                        顧問先名
-                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Text size="sm" c="dimmed">
+                          顧問先名
+                        </Text>
+                        <TooltipHelpButton
+                          tip="顧問先の正式名称を入力してください"
+                          size={14}
+                        />
+                      </div>
                       <TextInput {...editForm.getInputProps('name')} />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">
-                        作成日時
-                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Text size="sm" c="dimmed">
+                          作成日時
+                        </Text>
+                        <TooltipHelpButton
+                          tip="この顧問先が作成された日時（参照のみ）"
+                          size={14}
+                        />
+                      </div>
                       <TextInput
                         value={(selectedClient as any)?.created_at ?? ''}
                         readOnly
                       />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">
-                        更新日時
-                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Text size="sm" c="dimmed">
+                          更新日時
+                        </Text>
+                        <TooltipHelpButton
+                          tip="この顧問先が最後に更新された日時（参照のみ）"
+                          size={14}
+                        />
+                      </div>
                       <TextInput
                         value={(selectedClient as any)?.updated_at ?? ''}
                         readOnly
@@ -436,7 +544,7 @@ export const ClientPage = () => {
                 value="client_profiles"
                 pt="md"
                 style={{
-                  overflow: 'hidden',
+                  overflow: 'auto',
                   flex: 1,
                   minHeight: 0,
                   display: 'flex',
@@ -447,84 +555,216 @@ export const ClientPage = () => {
                   withBorder
                   radius="md"
                   p="md"
-                  style={{ flex: 1, overflow: 'auto' }}
+                  style={{ flex: 1, overflow: 'auto', paddingBottom: 32 }}
                 >
                   <Text weight={700}>顧問先情報</Text>
                   <Grid mt="sm">
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">
-                        設立日
-                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Text size="sm" c="dimmed">
+                          設立日
+                        </Text>
+                        <TooltipHelpButton
+                          tip="設立年月日を入力してください"
+                          size={14}
+                        />
+                      </div>
                       <TextInput {...editForm.getInputProps('established')} />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">
-                        事業形態
-                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Text size="sm" c="dimmed">
+                          事業形態
+                        </Text>
+                        <TooltipHelpButton
+                          tip="法人／個人など事業形態を入力してください"
+                          size={14}
+                        />
+                      </div>
                       <TextInput {...editForm.getInputProps('client_type')} />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">
-                        業種区分(大)
-                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Text size="sm" c="dimmed">
+                          業種区分(大)
+                        </Text>
+                        <TooltipHelpButton
+                          tip="大分類の業種コードや名称を入力してください"
+                          size={14}
+                        />
+                      </div>
                       <TextInput
                         {...editForm.getInputProps('industry_category_major')}
                       />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">
-                        業種区分(小)
-                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Text size="sm" c="dimmed">
+                          業種区分(小)
+                        </Text>
+                        <TooltipHelpButton
+                          tip="小分類の業種コードや名称を入力してください"
+                          size={14}
+                        />
+                      </div>
                       <TextInput
                         {...editForm.getInputProps('industry_category_minor')}
                       />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">
-                        法人番号
-                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Text size="sm" c="dimmed">
+                          法人番号
+                        </Text>
+                        <TooltipHelpButton
+                          tip="法人番号（会社番号）を入力してください"
+                          size={14}
+                        />
+                      </div>
                       <TextInput {...editForm.getInputProps('corporate_num')} />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">
-                        インボイス登録番号
-                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Text size="sm" c="dimmed">
+                          インボイス登録番号
+                        </Text>
+                        <TooltipHelpButton
+                          tip="インボイス制度の登録番号を入力してください（未登録の場合は空欄可）"
+                          size={14}
+                        />
+                      </div>
                       <TextInput {...editForm.getInputProps('invoice_num')} />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">
-                        決算日
-                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Text size="sm" c="dimmed">
+                          決算日
+                        </Text>
+                        <TooltipHelpButton
+                          tip="決算日の月/日を入力してください（例: 12-31）"
+                          size={14}
+                        />
+                      </div>
                       <TextInput
                         {...editForm.getInputProps('fiscal_end_day')}
                       />
                     </Grid.Col>
                     <Grid.Col span={12}>
-                      <Text size="sm" c="dimmed">
-                        住所
-                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Text size="sm" c="dimmed">
+                          住所
+                        </Text>
+                        <TooltipHelpButton
+                          tip="所在地（郵便番号・建物名含む）を入力してください"
+                          size={14}
+                        />
+                      </div>
                       <TextInput {...editForm.getInputProps('address')} />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">
-                        所轄税務署コード
-                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Text size="sm" c="dimmed">
+                          所轄税務署コード
+                        </Text>
+                        <TooltipHelpButton
+                          tip="所轄の税務署コードを入力してください（わからない場合は空欄可）"
+                          size={14}
+                        />
+                      </div>
                       <TextInput
                         {...editForm.getInputProps('tax_office_code')}
                       />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">
-                        所轄税務署名
-                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Text size="sm" c="dimmed">
+                          所轄税務署名
+                        </Text>
+                        <TooltipHelpButton
+                          tip="所轄税務署の名称を入力してください"
+                          size={14}
+                        />
+                      </div>
                       <TextInput
                         {...editForm.getInputProps('tax_office_name')}
                       />
                     </Grid.Col>
                     <Grid.Col span={12}>
-                      <Text size="sm" c="dimmed">
-                        備考
-                      </Text>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Text size="sm" c="dimmed">
+                          備考
+                        </Text>
+                        <TooltipHelpButton
+                          tip="補足情報や内部メモを記載してください"
+                          size={14}
+                        />
+                      </div>
                       <Textarea
                         {...editForm.getInputProps('note')}
                         minRows={3}
@@ -538,7 +778,7 @@ export const ClientPage = () => {
                 value="client_contacts"
                 pt="md"
                 style={{
-                  overflow: 'hidden',
+                  overflow: 'auto',
                   flex: 1,
                   minHeight: 0,
                   display: 'flex',
@@ -558,9 +798,21 @@ export const ClientPage = () => {
                         <Paper key={idx} withBorder radius="sm" p="sm" mb="sm">
                           <Grid>
                             <Grid.Col span={6}>
-                              <Text size="sm" c="dimmed">
-                                連絡先名称
-                              </Text>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                }}
+                              >
+                                <Text size="sm" c="dimmed">
+                                  連絡先名称
+                                </Text>
+                                <TooltipHelpButton
+                                  tip="連絡先の名称（部署名など）を入力してください"
+                                  size={14}
+                                />
+                              </div>
                               <TextInput
                                 value={c.name ?? ''}
                                 onChange={(ev) =>
@@ -573,9 +825,21 @@ export const ClientPage = () => {
                               />
                             </Grid.Col>
                             <Grid.Col span={6}>
-                              <Text size="sm" c="dimmed">
-                                担当者名
-                              </Text>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                }}
+                              >
+                                <Text size="sm" c="dimmed">
+                                  担当者名
+                                </Text>
+                                <TooltipHelpButton
+                                  tip="その連絡先の担当者名を入力してください"
+                                  size={14}
+                                />
+                              </div>
                               <TextInput
                                 value={c.manager_name ?? ''}
                                 onChange={(ev) =>
@@ -588,9 +852,21 @@ export const ClientPage = () => {
                               />
                             </Grid.Col>
                             <Grid.Col span={6}>
-                              <Text size="sm" c="dimmed">
-                                電話番号
-                              </Text>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                }}
+                              >
+                                <Text size="sm" c="dimmed">
+                                  電話番号
+                                </Text>
+                                <TooltipHelpButton
+                                  tip="連絡先の電話番号を入力してください（ハイフン可）"
+                                  size={14}
+                                />
+                              </div>
                               <TextInput
                                 value={c.phone_num ?? ''}
                                 onChange={(ev) =>
@@ -603,9 +879,21 @@ export const ClientPage = () => {
                               />
                             </Grid.Col>
                             <Grid.Col span={6}>
-                              <Text size="sm" c="dimmed">
-                                メールアドレス
-                              </Text>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                }}
+                              >
+                                <Text size="sm" c="dimmed">
+                                  メールアドレス
+                                </Text>
+                                <TooltipHelpButton
+                                  tip="連絡先のメールアドレスを入力してください"
+                                  size={14}
+                                />
+                              </div>
                               <TextInput
                                 value={c.mail_address ?? ''}
                                 onChange={(ev) =>
@@ -618,9 +906,21 @@ export const ClientPage = () => {
                               />
                             </Grid.Col>
                             <Grid.Col span={6}>
-                              <Text size="sm" c="dimmed">
-                                FAX
-                              </Text>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                }}
+                              >
+                                <Text size="sm" c="dimmed">
+                                  FAX
+                                </Text>
+                                <TooltipHelpButton
+                                  tip="FAX番号を入力してください（ない場合は空欄可）"
+                                  size={14}
+                                />
+                              </div>
                               <TextInput
                                 value={c.fax_num ?? ''}
                                 onChange={(ev) =>
@@ -649,7 +949,7 @@ export const ClientPage = () => {
                 value="client_engagements"
                 pt="md"
                 style={{
-                  overflow: 'hidden',
+                  overflow: 'auto',
                   flex: 1,
                   minHeight: 0,
                   display: 'flex',
@@ -669,9 +969,21 @@ export const ClientPage = () => {
                         <Paper key={idx} withBorder radius="sm" p="sm" mb="sm">
                           <Grid>
                             <Grid.Col span={6}>
-                              <Text size="sm" c="dimmed">
-                                巡回監査連絡時期
-                              </Text>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                }}
+                              >
+                                <Text size="sm" c="dimmed">
+                                  巡回監査連絡時期
+                                </Text>
+                                <TooltipHelpButton
+                                  tip="巡回監査の連絡を行う時期（例：毎月/四半期）を入力してください"
+                                  size={14}
+                                />
+                              </div>
                               <TextInput
                                 value={e.contact_timing ?? ''}
                                 onChange={(ev) =>
@@ -684,9 +996,21 @@ export const ClientPage = () => {
                               />
                             </Grid.Col>
                             <Grid.Col span={6}>
-                              <Text size="sm" c="dimmed">
-                                契約状況
-                              </Text>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                }}
+                              >
+                                <Text size="sm" c="dimmed">
+                                  契約状況
+                                </Text>
+                                <TooltipHelpButton
+                                  tip="現在の契約状況（継続/停止など）を入力してください"
+                                  size={14}
+                                />
+                              </div>
                               <TextInput
                                 value={e.status ?? ''}
                                 onChange={(ev) =>
@@ -699,9 +1023,21 @@ export const ClientPage = () => {
                               />
                             </Grid.Col>
                             <Grid.Col span={6}>
-                              <Text size="sm" c="dimmed">
-                                顧問開始日
-                              </Text>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                }}
+                              >
+                                <Text size="sm" c="dimmed">
+                                  顧問開始日
+                                </Text>
+                                <TooltipHelpButton
+                                  tip="顧問契約が開始した日を入力してください"
+                                  size={14}
+                                />
+                              </div>
                               <TextInput
                                 type="date"
                                 value={e.advisor_start_date ?? ''}
@@ -715,9 +1051,21 @@ export const ClientPage = () => {
                               />
                             </Grid.Col>
                             <Grid.Col span={6}>
-                              <Text size="sm" c="dimmed">
-                                顧問終了日
-                              </Text>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                }}
+                              >
+                                <Text size="sm" c="dimmed">
+                                  顧問終了日
+                                </Text>
+                                <TooltipHelpButton
+                                  tip="顧問契約が終了する日（未定の場合は空欄可）を入力してください"
+                                  size={14}
+                                />
+                              </div>
                               <TextInput
                                 type="date"
                                 value={e.advisor_end_date ?? ''}
@@ -764,7 +1112,7 @@ export const ClientPage = () => {
                 value="owner_profiles"
                 pt="md"
                 style={{
-                  overflow: 'hidden',
+                  overflow: 'auto',
                   flex: 1,
                   minHeight: 0,
                   display: 'flex',
@@ -783,9 +1131,21 @@ export const ClientPage = () => {
                       <Paper key={idx} withBorder radius="sm" p="sm" mb="sm">
                         <Grid>
                           <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">
-                              名前
-                            </Text>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                              }}
+                            >
+                              <Text size="sm" c="dimmed">
+                                名前
+                              </Text>
+                              <TooltipHelpButton
+                                tip="経営者の氏名を入力してください"
+                                size={14}
+                              />
+                            </div>
                             <TextInput
                               value={o.name ?? ''}
                               onChange={(ev) =>
@@ -798,9 +1158,21 @@ export const ClientPage = () => {
                             />
                           </Grid.Col>
                           <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">
-                              住所
-                            </Text>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                              }}
+                            >
+                              <Text size="sm" c="dimmed">
+                                住所
+                              </Text>
+                              <TooltipHelpButton
+                                tip="経営者の住所を入力してください（任意）"
+                                size={14}
+                              />
+                            </div>
                             <TextInput
                               value={o.address ?? ''}
                               onChange={(ev) =>
@@ -813,9 +1185,21 @@ export const ClientPage = () => {
                             />
                           </Grid.Col>
                           <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">
-                              電話番号
-                            </Text>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                              }}
+                            >
+                              <Text size="sm" c="dimmed">
+                                電話番号
+                              </Text>
+                              <TooltipHelpButton
+                                tip="経営者の連絡先電話番号を入力してください"
+                                size={14}
+                              />
+                            </div>
                             <TextInput
                               value={o.phone_num ?? ''}
                               onChange={(ev) =>
@@ -828,9 +1212,21 @@ export const ClientPage = () => {
                             />
                           </Grid.Col>
                           <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">
-                              メールアドレス
-                            </Text>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                              }}
+                            >
+                              <Text size="sm" c="dimmed">
+                                メールアドレス
+                              </Text>
+                              <TooltipHelpButton
+                                tip="経営者のメールアドレスを入力してください（任意）"
+                                size={14}
+                              />
+                            </div>
                             <TextInput
                               value={o.mail_address ?? ''}
                               onChange={(ev) =>
@@ -843,9 +1239,21 @@ export const ClientPage = () => {
                             />
                           </Grid.Col>
                           <Grid.Col span={12}>
-                            <Text size="sm" c="dimmed">
-                              経営方針
-                            </Text>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                              }}
+                            >
+                              <Text size="sm" c="dimmed">
+                                経営方針
+                              </Text>
+                              <TooltipHelpButton
+                                tip="経営方針やビジョンなどの概要を記載してください"
+                                size={14}
+                              />
+                            </div>
                             <Textarea
                               value={o.management_policy ?? ''}
                               onChange={(ev) =>

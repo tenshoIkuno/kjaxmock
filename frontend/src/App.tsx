@@ -9,6 +9,8 @@ import { Notifications } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { LoginPage } from './features/auth/Login';
+import OnboardingModal from '@/common/components/Onboarding/Onboarding';
+import ProductTourModal from '@/common/components/ProductTour/ProductTour';
 
 const queryClient = new QueryClient();
 
@@ -34,6 +36,8 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme} defaultColorScheme="auto">
         <Notifications position="top-right" autoClose={3000} />
+        <OnboardingModal />
+        <ProductTourModal />
         {/* userが存在すればLayoutページ、そうでなければログインページを表示 */}
         {!user ? <LoginPage /> : <Layout />}
       </MantineProvider>

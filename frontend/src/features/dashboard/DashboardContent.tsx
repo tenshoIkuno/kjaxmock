@@ -20,7 +20,8 @@ import {
   Skeleton,
   ActionIcon,
 } from '@mantine/core';
-import Onboarding from '@/common/components/Onboarding';
+import { openOnboarding } from '@/common/components/Onboarding/controller';
+import { openProductTour } from '@/common/components/ProductTour/controller';
 import { useNotifications } from '@/features/notifications/hooks/useNotifications';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { useEffect, useState } from 'react';
@@ -46,7 +47,6 @@ export function DashboardContent() {
   const [records, setRecords] = useState(() => getTableRecords());
   const [loading, setLoading] = useState(true);
   const [showNumber, setShowNumber] = useState(false);
-
   // when loading finishes, trigger fade-in for the numeric label
   useEffect(() => {
     if (!loading) {
@@ -343,8 +343,19 @@ export function DashboardContent() {
             <Title order={2} mb="xs">
               ダッシュボード
             </Title>
-            <Button size="xs" variant="outline">
+            <Button
+              size="xs"
+              variant="outline"
+              onClick={() => openOnboarding('ダッシュボード')}
+            >
               パターン１
+            </Button>
+            <Button
+              size="xs"
+              variant="subtle"
+              onClick={() => openProductTour('ダッシュボード')}
+            >
+              パターン３
             </Button>
           </div>
           <Text c="dimmed">
@@ -370,7 +381,7 @@ export function DashboardContent() {
         </Paper>
       </Group>
 
-      <Onboarding page="ダッシュボード" />
+      {/* Onboarding modal rendered globally in App; open via controller */}
 
       {/* KPI summary (role-specific) */}
       <div style={{ opacity: kpiOpacity, transition: 'opacity 220ms ease' }}>

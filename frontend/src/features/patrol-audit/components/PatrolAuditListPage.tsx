@@ -1,6 +1,8 @@
 import { DashboardLayout } from '@/common/dashboard/Dashboard';
 import { List } from '@/common/dashboard/List';
 import { Button, Group, ActionIcon } from '@mantine/core';
+import { openOnboarding } from '@/common/components/Onboarding/controller';
+import { openProductTour } from '@/common/components/ProductTour/controller';
 import { IconPlus, IconEdit, IconTrash } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import type { FC } from 'react';
@@ -110,7 +112,16 @@ export const PatrolAuditListPage: FC<Props> = ({ onClickCreate }) => {
           <Button leftSection={<IconPlus size={18} />} onClick={onClickCreate}>
             巡回監査報告作成
           </Button>
-          <Button size="sm">パターン１</Button>
+          <Button size="sm" onClick={() => openOnboarding('巡回監査')}>
+            パターン１
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => openProductTour('巡回監査')}
+          >
+            パターン３
+          </Button>
         </Group>
       }
     >

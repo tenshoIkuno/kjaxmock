@@ -5,6 +5,7 @@ import {
 } from '@/features/client/hooks/useClient';
 import type { ClientFormProps } from '@/features/client/types/clientTypes';
 import { Button, TextInput } from '@mantine/core';
+import TooltipHelpButton from '@/common/components/TooltipHelpButton';
 import { useForm } from '@mantine/form';
 
 export const ClientForm = ({
@@ -65,7 +66,15 @@ export const ClientForm = ({
   return (
     <form onSubmit={handleSubmit} noValidate>
       <TextInput
-        label="顧問先名"
+        label={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>顧問先名</span>
+            <TooltipHelpButton
+              tip="顧問先の正式名称を入力してください（50文字以内）"
+              size={20}
+            />
+          </div>
+        }
         placeholder="顧問先名を入力"
         {...form.getInputProps('name')}
         required
