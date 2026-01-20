@@ -6,7 +6,23 @@ import { DashboardModal } from '@/common/dashboard/Modal';
 import { ClientForm } from '@/features/client/components/ClientForm';
 import { useClients, useDeleteClient } from '@/features/client/hooks/useClient';
 import type { Client } from '@/features/client/types/clientTypes';
-import { Button, LoadingOverlay, Text, TextInput, Flex, Box, Paper, Textarea, Group, Tabs, Title, Grid, SimpleGrid, Divider, ActionIcon } from '@mantine/core';
+import {
+  Button,
+  LoadingOverlay,
+  Text,
+  TextInput,
+  Flex,
+  Box,
+  Paper,
+  Textarea,
+  Group,
+  Tabs,
+  Title,
+  Grid,
+  SimpleGrid,
+  Divider,
+  ActionIcon,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useUpdateClient } from '@/features/client/hooks/useClient';
 import {
@@ -24,7 +40,6 @@ export const ClientPage = () => {
   const [deleteModalOpend, setDeleteModalOpend] = useState(false);
   // 編集or削除中のclient保持
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  
 
   // クライアント一覧取得
   const { data: clients, isLoading, isError } = useClients();
@@ -59,22 +74,25 @@ export const ClientPage = () => {
     {
       key: 'corporate_num',
       label: '法人番号',
-      render: (client: Client) => ((client as any).corporate_num ?? (client as any).corporateNumber ?? '-'),
+      render: (client: Client) =>
+        (client as any).corporate_num ?? (client as any).corporateNumber ?? '-',
     },
     {
       key: 'phone',
       label: '電話番号',
-      render: (client: Client) => ((client as any).phone ?? (client as any).phone_num ?? '-'),
+      render: (client: Client) =>
+        (client as any).phone ?? (client as any).phone_num ?? '-',
     },
     {
       key: 'email',
       label: 'メールアドレス',
-      render: (client: Client) => ((client as any).email ?? (client as any).mail_address ?? '-'),
+      render: (client: Client) =>
+        (client as any).email ?? (client as any).mail_address ?? '-',
     },
     {
       key: 'address',
       label: '住所',
-      render: (client: Client) => ((client as any).address ?? '-'),
+      render: (client: Client) => (client as any).address ?? '-',
     },
     // カラムに...ボタン（編集・削除）追加
     {
@@ -110,13 +128,11 @@ export const ClientPage = () => {
   ] as const;
 
   // 編集フォーム（タブ内で使用）
-  const { mutate: updateClient, isPending: isUpdatePending } = useUpdateClient();
+  const { mutate: updateClient, isPending: isUpdatePending } =
+    useUpdateClient();
 
   const editForm = useForm({
     initialValues: {
-      id: '',
-      tenant_id: '',
-      name: '',
       established: '',
       client_type: '',
       industry_category_major: '',
@@ -144,9 +160,14 @@ export const ClientPage = () => {
         name: selectedClient.name ?? '',
         established: (selectedClient as any).established ?? '',
         client_type: (selectedClient as any).client_type ?? '',
-        industry_category_major: (selectedClient as any).industry_category_major ?? '',
-        industry_category_minor: (selectedClient as any).industry_category_minor ?? '',
-        corporate_num: (selectedClient as any).corporate_num ?? (selectedClient as any).corporateNumber ?? '',
+        industry_category_major:
+          (selectedClient as any).industry_category_major ?? '',
+        industry_category_minor:
+          (selectedClient as any).industry_category_minor ?? '',
+        corporate_num:
+          (selectedClient as any).corporate_num ??
+          (selectedClient as any).corporateNumber ??
+          '',
         invoice_num: (selectedClient as any).invoice_num ?? '',
         fiscal_end_day: (selectedClient as any).fiscal_end_day ?? '',
         address: (selectedClient as any).address ?? '',
@@ -169,7 +190,16 @@ export const ClientPage = () => {
   };
 
   const addContact = () => {
-    const arr = [...(editForm.values.contacts ?? []), { name: '', manager_name: '', phone_num: '', mail_address: '', fax_num: '' }];
+    const arr = [
+      ...(editForm.values.contacts ?? []),
+      {
+        name: '',
+        manager_name: '',
+        phone_num: '',
+        mail_address: '',
+        fax_num: '',
+      },
+    ];
     editForm.setValues({ ...editForm.values, contacts: arr });
   };
 
@@ -186,7 +216,10 @@ export const ClientPage = () => {
   };
 
   // inline edit component (shown in main area when editing)
-  const ClientInlineEdit: React.FC<{ client: Client; onClose: () => void }> = ({ client, onClose }) => {
+  const ClientInlineEdit: React.FC<{ client: Client; onClose: () => void }> = ({
+    client,
+    onClose,
+  }) => {
     const form = useForm({
       initialValues: {
         name: client.name ?? '',
@@ -200,11 +233,17 @@ export const ClientPage = () => {
     const { mutate: updateClient, isPending } = useUpdateClient();
 
     const handleSubmit = form.onSubmit((values) => {
-      updateClient({ clientId: client.id, payload: { name: values.name } }, { onSuccess: () => onClose() });
+      updateClient(
+        { clientId: client.id, payload: { name: values.name } },
+        { onSuccess: () => onClose() },
+      );
     });
 
     return (
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
+      >
         <TextInput label="顧問先名" {...form.getInputProps('name')} required />
         <TextInput label="住所" {...form.getInputProps('address')} />
         <TextInput label="電話番号" {...form.getInputProps('phone')} />
@@ -212,8 +251,12 @@ export const ClientPage = () => {
         <Textarea label="備考" {...form.getInputProps('note')} minRows={4} />
 
         <Group position="apart" mt="auto">
-          <Button variant="default" onClick={onClose}>キャンセル</Button>
-          <Button type="submit" loading={isPending}>保存</Button>
+          <Button variant="default" onClick={onClose}>
+            キャンセル
+          </Button>
+          <Button type="submit" loading={isPending}>
+            保存
+          </Button>
         </Group>
       </form>
     );
@@ -226,12 +269,16 @@ export const ClientPage = () => {
       label={headerLabel}
       filterArea={filterAreaNode}
       actionButton={
-        <Button
-          leftSection={<IconPlus size={20} />}
-          onClick={() => setFormMode('create')}
-        >
-          顧問先登録
-        </Button>
+        <Group style={{ justifyContent: 'flex-start' }}>
+          <Button
+            size="sm"
+            onClick={() => {
+              /* パターン１ 起動 */
+            }}
+          >
+            パターン１
+          </Button>
+        </Group>
       }
     >
       {isLoading ? (
@@ -240,34 +287,101 @@ export const ClientPage = () => {
         <Text>顧問先一覧の取得に失敗しました</Text>
       ) : formMode === 'edit' && selectedClient ? (
         // 編集はモーダルではなくメイン表示領域で、ヘッダー＋タブ構成の詳細編集画面を表示
-        <Box style={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <Box
+          style={{
+            height: '100%',
+            minHeight: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 12,
+          }}
+        >
           {/* 上部タイトル領域 */}
-          <Paper withBorder radius={0} p="md" style={{ background: '#eef6ff', borderRadius: 6 }}>
+          <Paper
+            withBorder
+            radius={0}
+            p="md"
+            style={{ background: '#eef6ff', borderRadius: 6 }}
+          >
             <Flex align="center" justify="space-between">
               <Group align="center" spacing="sm">
-                <ActionIcon variant="transparent" size="lg" onClick={() => { setFormMode(null); setSelectedClient(null); }}>
+                <ActionIcon
+                  variant="transparent"
+                  size="lg"
+                  onClick={() => {
+                    setFormMode(null);
+                    setSelectedClient(null);
+                  }}
+                >
                   {/* 戻る */}
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6" stroke="#2c6fb5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M15 18l-6-6 6-6"
+                      stroke="#2c6fb5"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </ActionIcon>
                 <div>
-                  <Title order={3} style={{ margin: 0 }}>{selectedClient.name}</Title>
-                  <Text size="sm" c="dimmed">事業形態 { (selectedClient as any).businessType ?? '法人' }　決算 { (selectedClient as any).fiscalMonth ?? '12月' }　連携開始日 { (selectedClient as any).joinedAt ?? '' }</Text>
+                  <Title order={3} style={{ margin: 0 }}>
+                    {selectedClient.name}
+                  </Title>
+                  <Text size="sm" c="dimmed">
+                    事業形態 {(selectedClient as any).businessType ?? '法人'}
+                    　決算 {(selectedClient as any).fiscalMonth ?? '12月'}
+                    　連携開始日 {(selectedClient as any).joinedAt ?? ''}
+                  </Text>
                 </div>
               </Group>
 
               <Group>
-                <Button leftIcon={<IconPencil size={16} />} variant="default">編集</Button>
+                <Button leftIcon={<IconPencil size={16} />} variant="default">
+                  編集
+                </Button>
               </Group>
             </Flex>
           </Paper>
- 
 
           {/* タブと内容：テーブル単位で分ける */}
-          <form onSubmit={editForm.onSubmit((values) => {
-            if (!selectedClient) return;
-            updateClient({ clientId: selectedClient.id, payload: values }, { onSuccess: () => { setFormMode(null); setSelectedClient(null); } });
-          })} style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-            <Tabs defaultValue="clients" styles={{ root: { flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' } }}>
+          <form
+            onSubmit={editForm.onSubmit((values) => {
+              if (!selectedClient) return;
+              updateClient(
+                { clientId: selectedClient.id, payload: values },
+                {
+                  onSuccess: () => {
+                    setFormMode(null);
+                    setSelectedClient(null);
+                  },
+                },
+              );
+            })}
+            style={{
+              flex: 1,
+              minHeight: 0,
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <Tabs
+              defaultValue="clients"
+              styles={{
+                root: {
+                  flex: 1,
+                  minHeight: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                },
+              }}
+            >
               <Tabs.List>
                 <Tabs.Tab value="clients">顧問先</Tabs.Tab>
                 <Tabs.Tab value="client_profiles">顧問先情報</Tabs.Tab>
@@ -276,197 +390,518 @@ export const ClientPage = () => {
                 <Tabs.Tab value="owner_profiles">経営者プロファイル</Tabs.Tab>
               </Tabs.List>
 
-              <Tabs.Panel value="clients" pt="md" style={{ overflow: 'auto', flex: 1, minHeight: 0 }}>
+              <Tabs.Panel
+                value="clients"
+                pt="md"
+                style={{ overflow: 'auto', flex: 1, minHeight: 0 }}
+              >
                 <Paper withBorder radius="md" p="md">
                   <Text weight={700}>顧問先マスタ</Text>
                   <Grid mt="sm">
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">テナントID</Text>
+                      <Text size="sm" c="dimmed">
+                        テナントID
+                      </Text>
                       <TextInput {...editForm.getInputProps('tenant_id')} />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">顧問先名</Text>
+                      <Text size="sm" c="dimmed">
+                        顧問先名
+                      </Text>
                       <TextInput {...editForm.getInputProps('name')} />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">作成日時</Text>
-                      <TextInput value={(selectedClient as any)?.created_at ?? ''} readOnly />
+                      <Text size="sm" c="dimmed">
+                        作成日時
+                      </Text>
+                      <TextInput
+                        value={(selectedClient as any)?.created_at ?? ''}
+                        readOnly
+                      />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">更新日時</Text>
-                      <TextInput value={(selectedClient as any)?.updated_at ?? ''} readOnly />
+                      <Text size="sm" c="dimmed">
+                        更新日時
+                      </Text>
+                      <TextInput
+                        value={(selectedClient as any)?.updated_at ?? ''}
+                        readOnly
+                      />
                     </Grid.Col>
                   </Grid>
                 </Paper>
               </Tabs.Panel>
 
-              <Tabs.Panel value="client_profiles" pt="md" style={{ overflow: 'hidden', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-                <Paper withBorder radius="md" p="md" style={{ flex: 1, overflow: 'auto' }}>
+              <Tabs.Panel
+                value="client_profiles"
+                pt="md"
+                style={{
+                  overflow: 'hidden',
+                  flex: 1,
+                  minHeight: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <Paper
+                  withBorder
+                  radius="md"
+                  p="md"
+                  style={{ flex: 1, overflow: 'auto' }}
+                >
                   <Text weight={700}>顧問先情報</Text>
                   <Grid mt="sm">
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">設立日</Text>
+                      <Text size="sm" c="dimmed">
+                        設立日
+                      </Text>
                       <TextInput {...editForm.getInputProps('established')} />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">事業形態</Text>
+                      <Text size="sm" c="dimmed">
+                        事業形態
+                      </Text>
                       <TextInput {...editForm.getInputProps('client_type')} />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">業種区分(大)</Text>
-                      <TextInput {...editForm.getInputProps('industry_category_major')} />
+                      <Text size="sm" c="dimmed">
+                        業種区分(大)
+                      </Text>
+                      <TextInput
+                        {...editForm.getInputProps('industry_category_major')}
+                      />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">業種区分(小)</Text>
-                      <TextInput {...editForm.getInputProps('industry_category_minor')} />
+                      <Text size="sm" c="dimmed">
+                        業種区分(小)
+                      </Text>
+                      <TextInput
+                        {...editForm.getInputProps('industry_category_minor')}
+                      />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">法人番号</Text>
+                      <Text size="sm" c="dimmed">
+                        法人番号
+                      </Text>
                       <TextInput {...editForm.getInputProps('corporate_num')} />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">インボイス登録番号</Text>
+                      <Text size="sm" c="dimmed">
+                        インボイス登録番号
+                      </Text>
                       <TextInput {...editForm.getInputProps('invoice_num')} />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">決算日</Text>
-                      <TextInput {...editForm.getInputProps('fiscal_end_day')} />
+                      <Text size="sm" c="dimmed">
+                        決算日
+                      </Text>
+                      <TextInput
+                        {...editForm.getInputProps('fiscal_end_day')}
+                      />
                     </Grid.Col>
                     <Grid.Col span={12}>
-                      <Text size="sm" c="dimmed">住所</Text>
+                      <Text size="sm" c="dimmed">
+                        住所
+                      </Text>
                       <TextInput {...editForm.getInputProps('address')} />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">所轄税務署コード</Text>
-                      <TextInput {...editForm.getInputProps('tax_office_code')} />
+                      <Text size="sm" c="dimmed">
+                        所轄税務署コード
+                      </Text>
+                      <TextInput
+                        {...editForm.getInputProps('tax_office_code')}
+                      />
                     </Grid.Col>
                     <Grid.Col span={6}>
-                      <Text size="sm" c="dimmed">所轄税務署名</Text>
-                      <TextInput {...editForm.getInputProps('tax_office_name')} />
+                      <Text size="sm" c="dimmed">
+                        所轄税務署名
+                      </Text>
+                      <TextInput
+                        {...editForm.getInputProps('tax_office_name')}
+                      />
                     </Grid.Col>
                     <Grid.Col span={12}>
-                      <Text size="sm" c="dimmed">備考</Text>
-                      <Textarea {...editForm.getInputProps('note')} minRows={3} />
+                      <Text size="sm" c="dimmed">
+                        備考
+                      </Text>
+                      <Textarea
+                        {...editForm.getInputProps('note')}
+                        minRows={3}
+                      />
                     </Grid.Col>
                   </Grid>
                 </Paper>
               </Tabs.Panel>
 
-              <Tabs.Panel value="client_contacts" pt="md" style={{ overflow: 'hidden', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-                <Paper withBorder radius="md" p="md" style={{ flex: 1, overflow: 'auto' }}>
+              <Tabs.Panel
+                value="client_contacts"
+                pt="md"
+                style={{
+                  overflow: 'hidden',
+                  flex: 1,
+                  minHeight: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <Paper
+                  withBorder
+                  radius="md"
+                  p="md"
+                  style={{ flex: 1, overflow: 'auto' }}
+                >
                   <Text weight={700}>連絡先</Text>
                   <Box mt="sm">
-                    {((editForm.values.contacts ?? []) as any[]).map((c, idx) => (
-                      <Paper key={idx} withBorder radius="sm" p="sm" mb="sm">
-                        <Grid>
-                          <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">連絡先名称</Text>
-                            <TextInput value={c.name ?? ''} onChange={(ev) => setContactField(idx, 'name', ev.currentTarget.value)} />
-                          </Grid.Col>
-                          <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">担当者名</Text>
-                            <TextInput value={c.manager_name ?? ''} onChange={(ev) => setContactField(idx, 'manager_name', ev.currentTarget.value)} />
-                          </Grid.Col>
-                          <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">電話番号</Text>
-                            <TextInput value={c.phone_num ?? ''} onChange={(ev) => setContactField(idx, 'phone_num', ev.currentTarget.value)} />
-                          </Grid.Col>
-                          <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">メールアドレス</Text>
-                            <TextInput value={c.mail_address ?? ''} onChange={(ev) => setContactField(idx, 'mail_address', ev.currentTarget.value)} />
-                          </Grid.Col>
-                          <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">FAX</Text>
-                            <TextInput value={c.fax_num ?? ''} onChange={(ev) => setContactField(idx, 'fax_num', ev.currentTarget.value)} />
-                          </Grid.Col>
-                        </Grid>
-                      </Paper>
-                    ))}
+                    {((editForm.values.contacts ?? []) as any[]).map(
+                      (c, idx) => (
+                        <Paper key={idx} withBorder radius="sm" p="sm" mb="sm">
+                          <Grid>
+                            <Grid.Col span={6}>
+                              <Text size="sm" c="dimmed">
+                                連絡先名称
+                              </Text>
+                              <TextInput
+                                value={c.name ?? ''}
+                                onChange={(ev) =>
+                                  setContactField(
+                                    idx,
+                                    'name',
+                                    ev.currentTarget.value,
+                                  )
+                                }
+                              />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                              <Text size="sm" c="dimmed">
+                                担当者名
+                              </Text>
+                              <TextInput
+                                value={c.manager_name ?? ''}
+                                onChange={(ev) =>
+                                  setContactField(
+                                    idx,
+                                    'manager_name',
+                                    ev.currentTarget.value,
+                                  )
+                                }
+                              />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                              <Text size="sm" c="dimmed">
+                                電話番号
+                              </Text>
+                              <TextInput
+                                value={c.phone_num ?? ''}
+                                onChange={(ev) =>
+                                  setContactField(
+                                    idx,
+                                    'phone_num',
+                                    ev.currentTarget.value,
+                                  )
+                                }
+                              />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                              <Text size="sm" c="dimmed">
+                                メールアドレス
+                              </Text>
+                              <TextInput
+                                value={c.mail_address ?? ''}
+                                onChange={(ev) =>
+                                  setContactField(
+                                    idx,
+                                    'mail_address',
+                                    ev.currentTarget.value,
+                                  )
+                                }
+                              />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                              <Text size="sm" c="dimmed">
+                                FAX
+                              </Text>
+                              <TextInput
+                                value={c.fax_num ?? ''}
+                                onChange={(ev) =>
+                                  setContactField(
+                                    idx,
+                                    'fax_num',
+                                    ev.currentTarget.value,
+                                  )
+                                }
+                              />
+                            </Grid.Col>
+                          </Grid>
+                        </Paper>
+                      ),
+                    )}
                     <Group position="right">
-                      <Button variant="default" onClick={addContact}>連絡先を追加</Button>
+                      <Button variant="default" onClick={addContact}>
+                        連絡先を追加
+                      </Button>
                     </Group>
                   </Box>
                 </Paper>
               </Tabs.Panel>
 
-              <Tabs.Panel value="client_engagements" pt="md" style={{ overflow: 'hidden', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-                <Paper withBorder radius="md" p="md" style={{ flex: 1, overflow: 'auto' }}>
+              <Tabs.Panel
+                value="client_engagements"
+                pt="md"
+                style={{
+                  overflow: 'hidden',
+                  flex: 1,
+                  minHeight: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <Paper
+                  withBorder
+                  radius="md"
+                  p="md"
+                  style={{ flex: 1, overflow: 'auto' }}
+                >
                   <Text weight={700}>顧問先契約</Text>
                   <Box mt="sm">
-                    {((editForm.values.engagements ?? []) as any[]).map((e, idx) => (
-                      <Paper key={idx} withBorder radius="sm" p="sm" mb="sm">
-                        <Grid>
-                          <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">巡回監査連絡時期</Text>
-                            <TextInput value={e.contact_timing ?? ''} onChange={(ev) => setEngagementField(idx, 'contact_timing', ev.currentTarget.value)} />
-                          </Grid.Col>
-                          <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">契約状況</Text>
-                            <TextInput value={e.status ?? ''} onChange={(ev) => setEngagementField(idx, 'status', ev.currentTarget.value)} />
-                          </Grid.Col>
-                          <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">顧問開始日</Text>
-                            <TextInput type="date" value={e.advisor_start_date ?? ''} onChange={(ev) => setEngagementField(idx, 'advisor_start_date', ev.currentTarget.value)} />
-                          </Grid.Col>
-                          <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">顧問終了日</Text>
-                            <TextInput type="date" value={e.advisor_end_date ?? ''} onChange={(ev) => setEngagementField(idx, 'advisor_end_date', ev.currentTarget.value)} />
-                          </Grid.Col>
-                        </Grid>
-                      </Paper>
-                    ))}
+                    {((editForm.values.engagements ?? []) as any[]).map(
+                      (e, idx) => (
+                        <Paper key={idx} withBorder radius="sm" p="sm" mb="sm">
+                          <Grid>
+                            <Grid.Col span={6}>
+                              <Text size="sm" c="dimmed">
+                                巡回監査連絡時期
+                              </Text>
+                              <TextInput
+                                value={e.contact_timing ?? ''}
+                                onChange={(ev) =>
+                                  setEngagementField(
+                                    idx,
+                                    'contact_timing',
+                                    ev.currentTarget.value,
+                                  )
+                                }
+                              />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                              <Text size="sm" c="dimmed">
+                                契約状況
+                              </Text>
+                              <TextInput
+                                value={e.status ?? ''}
+                                onChange={(ev) =>
+                                  setEngagementField(
+                                    idx,
+                                    'status',
+                                    ev.currentTarget.value,
+                                  )
+                                }
+                              />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                              <Text size="sm" c="dimmed">
+                                顧問開始日
+                              </Text>
+                              <TextInput
+                                type="date"
+                                value={e.advisor_start_date ?? ''}
+                                onChange={(ev) =>
+                                  setEngagementField(
+                                    idx,
+                                    'advisor_start_date',
+                                    ev.currentTarget.value,
+                                  )
+                                }
+                              />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                              <Text size="sm" c="dimmed">
+                                顧問終了日
+                              </Text>
+                              <TextInput
+                                type="date"
+                                value={e.advisor_end_date ?? ''}
+                                onChange={(ev) =>
+                                  setEngagementField(
+                                    idx,
+                                    'advisor_end_date',
+                                    ev.currentTarget.value,
+                                  )
+                                }
+                              />
+                            </Grid.Col>
+                          </Grid>
+                        </Paper>
+                      ),
+                    )}
                     <Group position="right">
-                      <Button variant="default" onClick={() => {
-                        const arr = [...(editForm.values.engagements ?? []), { contact_timing: '', status: '', advisor_start_date: '', advisor_end_date: '' }];
-                        editForm.setValues({ ...editForm.values, engagements: arr });
-                      }}>契約を追加</Button>
+                      <Button
+                        variant="default"
+                        onClick={() => {
+                          const arr = [
+                            ...(editForm.values.engagements ?? []),
+                            {
+                              contact_timing: '',
+                              status: '',
+                              advisor_start_date: '',
+                              advisor_end_date: '',
+                            },
+                          ];
+                          editForm.setValues({
+                            ...editForm.values,
+                            engagements: arr,
+                          });
+                        }}
+                      >
+                        契約を追加
+                      </Button>
                     </Group>
                   </Box>
                 </Paper>
               </Tabs.Panel>
 
-              <Tabs.Panel value="owner_profiles" pt="md" style={{ overflow: 'hidden', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-                <Paper withBorder radius="md" p="md" style={{ flex: 1, overflow: 'auto' }}>
+              <Tabs.Panel
+                value="owner_profiles"
+                pt="md"
+                style={{
+                  overflow: 'hidden',
+                  flex: 1,
+                  minHeight: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <Paper
+                  withBorder
+                  radius="md"
+                  p="md"
+                  style={{ flex: 1, overflow: 'auto' }}
+                >
                   <Text weight={700}>経営者プロファイル</Text>
                   <Box mt="sm">
                     {((editForm.values.owners ?? []) as any[]).map((o, idx) => (
                       <Paper key={idx} withBorder radius="sm" p="sm" mb="sm">
                         <Grid>
                           <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">名前</Text>
-                            <TextInput value={o.name ?? ''} onChange={(ev) => setOwnerField(idx, 'name', ev.currentTarget.value)} />
+                            <Text size="sm" c="dimmed">
+                              名前
+                            </Text>
+                            <TextInput
+                              value={o.name ?? ''}
+                              onChange={(ev) =>
+                                setOwnerField(
+                                  idx,
+                                  'name',
+                                  ev.currentTarget.value,
+                                )
+                              }
+                            />
                           </Grid.Col>
                           <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">住所</Text>
-                            <TextInput value={o.address ?? ''} onChange={(ev) => setOwnerField(idx, 'address', ev.currentTarget.value)} />
+                            <Text size="sm" c="dimmed">
+                              住所
+                            </Text>
+                            <TextInput
+                              value={o.address ?? ''}
+                              onChange={(ev) =>
+                                setOwnerField(
+                                  idx,
+                                  'address',
+                                  ev.currentTarget.value,
+                                )
+                              }
+                            />
                           </Grid.Col>
                           <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">電話番号</Text>
-                            <TextInput value={o.phone_num ?? ''} onChange={(ev) => setOwnerField(idx, 'phone_num', ev.currentTarget.value)} />
+                            <Text size="sm" c="dimmed">
+                              電話番号
+                            </Text>
+                            <TextInput
+                              value={o.phone_num ?? ''}
+                              onChange={(ev) =>
+                                setOwnerField(
+                                  idx,
+                                  'phone_num',
+                                  ev.currentTarget.value,
+                                )
+                              }
+                            />
                           </Grid.Col>
                           <Grid.Col span={6}>
-                            <Text size="sm" c="dimmed">メールアドレス</Text>
-                            <TextInput value={o.mail_address ?? ''} onChange={(ev) => setOwnerField(idx, 'mail_address', ev.currentTarget.value)} />
+                            <Text size="sm" c="dimmed">
+                              メールアドレス
+                            </Text>
+                            <TextInput
+                              value={o.mail_address ?? ''}
+                              onChange={(ev) =>
+                                setOwnerField(
+                                  idx,
+                                  'mail_address',
+                                  ev.currentTarget.value,
+                                )
+                              }
+                            />
                           </Grid.Col>
                           <Grid.Col span={12}>
-                            <Text size="sm" c="dimmed">経営方針</Text>
-                            <Textarea value={o.management_policy ?? ''} onChange={(ev) => setOwnerField(idx, 'management_policy', ev.currentTarget.value)} minRows={3} />
+                            <Text size="sm" c="dimmed">
+                              経営方針
+                            </Text>
+                            <Textarea
+                              value={o.management_policy ?? ''}
+                              onChange={(ev) =>
+                                setOwnerField(
+                                  idx,
+                                  'management_policy',
+                                  ev.currentTarget.value,
+                                )
+                              }
+                              minRows={3}
+                            />
                           </Grid.Col>
                         </Grid>
                       </Paper>
                     ))}
                     <Group position="right">
-                      <Button variant="default" onClick={() => {
-                        const arr = [...(editForm.values.owners ?? []), { name: '', address: '', phone_num: '', mail_address: '', management_policy: '', tax_policy: '', family_structure: '', has_successor: false, hobbies: '' }];
-                        editForm.setValues({ ...editForm.values, owners: arr });
-                      }}>担当者を追加</Button>
+                      <Button
+                        variant="default"
+                        onClick={() => {
+                          const arr = [
+                            ...(editForm.values.owners ?? []),
+                            {
+                              name: '',
+                              address: '',
+                              phone_num: '',
+                              mail_address: '',
+                              management_policy: '',
+                              tax_policy: '',
+                              family_structure: '',
+                              has_successor: false,
+                              hobbies: '',
+                            },
+                          ];
+                          editForm.setValues({
+                            ...editForm.values,
+                            owners: arr,
+                          });
+                        }}
+                      >
+                        担当者を追加
+                      </Button>
                     </Group>
                   </Box>
                 </Paper>
               </Tabs.Panel>
             </Tabs>
             <Group position="right" mt="md">
-              <Button variant="default" onClick={() => { setFormMode(null); setSelectedClient(null); }}>キャンセル</Button>
+              <Button
+                variant="default"
+                onClick={() => {
+                  setFormMode(null);
+                  setSelectedClient(null);
+                }}
+              >
+                キャンセル
+              </Button>
               <Button type="submit">保存</Button>
             </Group>
           </form>

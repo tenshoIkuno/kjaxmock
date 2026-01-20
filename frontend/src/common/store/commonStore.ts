@@ -24,7 +24,10 @@ type ExtendedCommonState = CommonState & {
   // can open in a specific mode (create/history) for a given client.
   patrolAuditRequestedMode: PatrolAuditModalMode;
   patrolAuditRequestedClientId: string | null;
-  setPatrolAuditRequested: (m: PatrolAuditModalMode, clientId?: string | null) => void;
+  setPatrolAuditRequested: (
+    m: PatrolAuditModalMode,
+    clientId?: string | null,
+  ) => void;
   clearPatrolAuditRequested: () => void;
 };
 
@@ -32,10 +35,21 @@ export const useCommonStore = create<ExtendedCommonState>((set) => ({
   selected: 'dashboard',
   select: (menu) => set({ selected: menu }),
   patrolAuditModalMode: 'none',
-  setPatrolAuditModalMode: (m: PatrolAuditModalMode) => set({ patrolAuditModalMode: m }),
+  setPatrolAuditModalMode: (m: PatrolAuditModalMode) =>
+    set({ patrolAuditModalMode: m }),
   patrolAuditRequestedMode: 'none',
   patrolAuditRequestedClientId: null,
-  setPatrolAuditRequested: (m: PatrolAuditModalMode, clientId: string | null = null) =>
-    set({ patrolAuditRequestedMode: m, patrolAuditRequestedClientId: clientId }),
-  clearPatrolAuditRequested: () => set({ patrolAuditRequestedMode: 'none', patrolAuditRequestedClientId: null }),
+  setPatrolAuditRequested: (
+    m: PatrolAuditModalMode,
+    clientId: string | null = null,
+  ) =>
+    set({
+      patrolAuditRequestedMode: m,
+      patrolAuditRequestedClientId: clientId,
+    }),
+  clearPatrolAuditRequested: () =>
+    set({
+      patrolAuditRequestedMode: 'none',
+      patrolAuditRequestedClientId: null,
+    }),
 }));

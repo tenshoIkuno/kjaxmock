@@ -4,7 +4,8 @@ import { MessageInput } from '@/features/chat/components/MessageInput';
 import { useChat } from '@/features/chat/hooks/useChat';
 import { useChatStream } from '@/features/chat/hooks/useMessage';
 import { useChatStore } from '@/features/chat/store/chatStore';
-import { Box, Flex } from '@mantine/core';
+import { Box, Flex, Button } from '@mantine/core';
+import Onboarding from '@/common/components/Onboarding';
 
 export function ChatPage() {
   // useChatStoreから、現在選択されているchatIdを取得
@@ -38,6 +39,10 @@ export function ChatPage() {
 
   return (
     <Flex direction="column" gap={0} style={{ flex: 1, minHeight: 0 }}>
+      <Onboarding page="チャット" />
+      <div style={{ padding: 8 }}>
+        <Button size="xs">パターン１</Button>
+      </div>
       {currentChatId ? (
         <ChatWindow
           messages={displayMessages}

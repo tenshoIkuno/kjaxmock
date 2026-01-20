@@ -1,0 +1,19 @@
+.root {
+  padding: 12px;
+}
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.steps {
+  margin-top: 8px;
+}
+.step {
+  margin-bottom: 8px;
+}
+.actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}

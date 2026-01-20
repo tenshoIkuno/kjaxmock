@@ -32,7 +32,10 @@ const initialAudits: PatrolAudit[] = [
 
 // columns はコンポーネント内で生成（親から渡された onClickCreate を使うため）
 
-const ActionButtons: FC<{ audit: PatrolAudit; onEdit?: (a: PatrolAudit) => void }> = ({ audit, onEdit }) => {
+const ActionButtons: FC<{
+  audit: PatrolAudit;
+  onEdit?: (a: PatrolAudit) => void;
+}> = ({ audit, onEdit }) => {
   const [editing, setEditing] = useState(false);
 
   const _onEdit = () => {
@@ -44,7 +47,9 @@ const ActionButtons: FC<{ audit: PatrolAudit; onEdit?: (a: PatrolAudit) => void 
 
   const onDelete = () => {
     // PatrolAuditListPage 側で削除処理を行うため、カスタムイベントを発火させる
-    const ev = new CustomEvent('patrolAudit:delete', { detail: { id: audit.id } });
+    const ev = new CustomEvent('patrolAudit:delete', {
+      detail: { id: audit.id },
+    });
     window.dispatchEvent(ev);
   };
 
@@ -74,7 +79,11 @@ export const PatrolAuditListPage: FC<Props> = ({ onClickCreate }) => {
       setAudits((prev) => prev.filter((a) => a.id !== id));
     };
     window.addEventListener('patrolAudit:delete', handler as EventListener);
-    return () => window.removeEventListener('patrolAudit:delete', handler as EventListener);
+    return () =>
+      window.removeEventListener(
+        'patrolAudit:delete',
+        handler as EventListener,
+      );
   }, []);
 
   const columns = [
@@ -85,7 +94,9 @@ export const PatrolAuditListPage: FC<Props> = ({ onClickCreate }) => {
     {
       key: 'actions',
       label: '操作',
-      render: (row: PatrolAudit) => <ActionButtons audit={row} onEdit={onClickCreate} />,
+      render: (row: PatrolAudit) => (
+        <ActionButtons audit={row} onEdit={onClickCreate} />
+      ),
       align: 'center',
     },
   ] as const;
@@ -95,9 +106,12 @@ export const PatrolAuditListPage: FC<Props> = ({ onClickCreate }) => {
       title="巡回監査報告"
       label="巡回監査報告の一覧"
       actionButton={
-        <Button leftSection={<IconPlus size={18} />} onClick={onClickCreate}>
-          巡回監査報告作成
-        </Button>
+        <Group>
+          <Button leftSection={<IconPlus size={18} />} onClick={onClickCreate}>
+            巡回監査報告作成
+          </Button>
+          <Button size="sm">パターン１</Button>
+        </Group>
       }
     >
       <List columns={columns} data={audits} />

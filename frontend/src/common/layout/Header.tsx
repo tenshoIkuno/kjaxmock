@@ -85,10 +85,13 @@ export function Header({ opened, onToggle }: HeaderProps) {
   };
 
   // notifications drawer
-  const [notifOpened, { open: openNotif, close: closeNotif }] = useDisclosure(false);
+  const [notifOpened, { open: openNotif, close: closeNotif }] =
+    useDisclosure(false);
   const { data: notifs } = useNotifications();
   const { data: alerts } = useAlerts();
-  const notifUnread = (notifs ?? []).filter((n) => !n.read && n.severity === 'critical').length;
+  const notifUnread = (notifs ?? []).filter(
+    (n) => !n.read && n.severity === 'critical',
+  ).length;
   const alertUnread = (alerts ?? []).filter((a) => !a.resolved).length;
   const unreadCount = notifUnread + alertUnread;
 
@@ -130,7 +133,11 @@ export function Header({ opened, onToggle }: HeaderProps) {
         <Group gap="sm" wrap="nowrap">
           {/* 通知（ベル） */}
           <Group>
-            <Button variant="subtle" onClick={openNotif} aria-label={`通知を開く (${unreadCount} 件)`}> 
+            <Button
+              variant="subtle"
+              onClick={openNotif}
+              aria-label={`通知を開く (${unreadCount} 件)`}
+            >
               {unreadCount > 0 ? (
                 <Indicator
                   size={14}
@@ -138,7 +145,13 @@ export function Header({ opened, onToggle }: HeaderProps) {
                   color="red"
                   offset={6}
                   position="top-end"
-                  labelProps={{ style: { fontSize: 10, lineHeight: '12px', padding: '0 4px' } }}
+                  labelProps={{
+                    style: {
+                      fontSize: 10,
+                      lineHeight: '12px',
+                      padding: '0 4px',
+                    },
+                  }}
                 >
                   <IconBell size={24} />
                 </Indicator>
@@ -179,26 +192,38 @@ export function Header({ opened, onToggle }: HeaderProps) {
                                 padding: '6px 8px',
                                 textAlign: 'left',
                                 borderRadius: 6,
-                                background: isSelected ? 'rgba(0,125,255,0.08)' : undefined,
+                                background: isSelected
+                                  ? 'rgba(0,125,255,0.08)'
+                                  : undefined,
                                 transition: 'background-color 150ms ease',
                                 cursor: 'pointer',
                               }}
                               onClick={() => {
                                 const u = useAuthStore.getState().user;
                                 if (u) {
-                                  useAuthStore.getState().setUser({ ...u, role: r as any });
+                                  useAuthStore
+                                    .getState()
+                                    .setUser({ ...u, role: r as any });
                                 }
                               }}
                               onMouseEnter={(e) => {
-                                if (!isSelected) (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.03)';
+                                if (!isSelected)
+                                  (
+                                    e.currentTarget as HTMLElement
+                                  ).style.background = 'rgba(0,0,0,0.03)';
                               }}
                               onMouseLeave={(e) => {
-                                if (!isSelected) (e.currentTarget as HTMLElement).style.background = undefined;
+                                if (!isSelected)
+                                  (
+                                    e.currentTarget as HTMLElement
+                                  ).style.background = undefined;
                               }}
                             >
                               <Group position="apart">
                                 <Text>{r}</Text>
-                                {isSelected ? <Badge color="blue">選択中</Badge> : null}
+                                {isSelected ? (
+                                  <Badge color="blue">選択中</Badge>
+                                ) : null}
                               </Group>
                             </UnstyledButton>
                           </td>
@@ -246,25 +271,29 @@ export function Header({ opened, onToggle }: HeaderProps) {
         </Group>
       </Group>
 
-            {/* ログアウト確認モーダル（DashboardModal を利用して一貫化） */}
-            <DashboardModal opened={logoutOpened} onClose={closeLogoutModal} title="ログアウトしますか？">
-            <Group justify="flex-end">
-              <Button variant="default" onClick={closeLogoutModal}>
-                いいえ
-              </Button>
-              <Button
-                color="red"
-                onClick={() => {
-                  logout();
-                  closeLogoutModal();
-                }}
-              >
-                はい
-              </Button>
-            </Group>
-          </DashboardModal>
+      {/* ログアウト確認モーダル（DashboardModal を利用して一貫化） */}
+      <DashboardModal
+        opened={logoutOpened}
+        onClose={closeLogoutModal}
+        title="ログアウトしますか？"
+      >
+        <Group justify="flex-end">
+          <Button variant="default" onClick={closeLogoutModal}>
+            いいえ
+          </Button>
+          <Button
+            color="red"
+            onClick={() => {
+              logout();
+              closeLogoutModal();
+            }}
+          >
+            はい
+          </Button>
+        </Group>
+      </DashboardModal>
 
-            {/* ヘッダーのグローバル顧問先選択モーダルは削除済み */}
+      {/* ヘッダーのグローバル顧問先選択モーダルは削除済み */}
     </>
   );
 }
