@@ -71,8 +71,48 @@ export const ClientPage = () => {
     client.name.toLowerCase().includes(searchText.toLowerCase()),
   );
 
+  // 表示順: 新しいものを先頭に表示する。
+  // - もし created_at があれば降順でソート
+  // - それ以外で id が数値なら数値降順
+  // - どちらもなければ、API が新規を末尾に追加する前提で配列を反転して先頭に持ってくる
+  const displayedClients = (() => {
+    const arr = [...filteredClients];
+    if (arr.length === 0) return arr;
+    const hasCreatedAt = arr.every((c) => !!(c as any).created_at);
+    if (hasCreatedAt) {
+      return arr.sort(
+        (a: Client, b: Client) =>
+          new Date((b as any).created_at).getTime() -
+          new Date((a as any).created_at).getTime(),
+      );
+    }
+    // try numeric id
+    const allNumericId = arr.every((c) => !isNaN(Number((c as any).id)));
+    if (allNumericId) {
+      return arr.sort(
+        (a: Client, b: Client) => Number((b as any).id) - Number((a as any).id),
+      );
+    }
+    // fallback: reverse the array to bring newly appended items (at end) to the top
+    return arr.reverse();
+  })();
+
   const columns = [
-    { key: 'name', label: '顧問先名' },
+    {
+      key: 'name',
+      label: '顧問先名',
+      render: (client: Client, rowIndex: number) => (
+        <span
+          id={
+            rowIndex === 0
+              ? 'client-first-row'
+              : `client-row-${(client as any).id}`
+          }
+        >
+          {client.name}
+        </span>
+      ),
+    },
     {
       key: 'corporate_num',
       label: '法人番号',
@@ -353,6 +393,15 @@ export const ClientPage = () => {
             }}
           >
             パターン３
+          </Button>
+          <Button
+            id="client-register-button"
+            size="sm"
+            variant="filled"
+            leftIcon={<IconPlus size={14} />}
+            onClick={() => setFormMode('create')}
+          >
+            顧問先登録
           </Button>
         </Group>
       }
@@ -1317,7 +1366,7 @@ export const ClientPage = () => {
       ) : (
         <List
           columns={columns}
-          data={filteredClients ?? []} // クライアント一覧を List に渡す
+          data={displayedClients ?? []} // クライアント一覧を List に渡す（新しいものを先頭に）
         />
       )}
 

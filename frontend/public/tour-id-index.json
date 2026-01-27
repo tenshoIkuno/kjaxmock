@@ -1,0 +1,14 @@
+{
+  "sample-start-button": [
+    "frontend/src/features/dashboard/DashboardContent.tsx",
+    "frontend/public/product-tour.json"
+  ],
+  "nav-clients": [
+    "frontend/src/common/layout/Navbar/NavbarOpene.tsx",
+    "frontend/public/product-tour.json"
+  ],
+  "client-register-button": [
+    "frontend/src/features/client/ClientPage.tsx",
+    "frontend/public/product-tour.json"
+  ]
+}

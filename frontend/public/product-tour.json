@@ -1,0 +1,59 @@
+[
+  {
+    "name": "顧問先登録ツアー",
+    "items": [
+      {
+        "ID": "nav-clients",
+        "テキスト": "サイドメニューの「顧問先」を開きます（button）",
+        "タイプ": "button"
+      },
+      {
+        "ID": "client-register-button",
+        "テキスト": "顧問先登録ボタンを押して、新規登録フォームを開きます（button）",
+        "タイプ": "button"
+      },
+      {
+        "ID": "client-create-area",
+        "テキスト": "顧問先名を入力し、登録ボタンを押してください（入力欄と登録ボタンをまとめて囲みます）。",
+        "タイプ": "button",
+        "requiredSelector": "#client-submit-button"
+      },
+      {
+        "ID": "client-first-row",
+        "テキスト": "登録が完了すると、一覧に追加された顧問先が表示されます。確認してください。",
+        "タイプ": "normal"
+      }
+    ]
+  },
+  {
+    "name": "チーム作成ツアー",
+    "items": [
+      {
+        "ID": "nav-settings",
+        "テキスト": "サイドメニューの「設定」を開きます（button）",
+        "タイプ": "button"
+      },
+      {
+        "ID": "settings-tab-teams",
+        "テキスト": "設定画面の「チーム」タブを開きます（button）",
+        "タイプ": "button"
+      },
+      {
+        "ID": "team-create-button",
+        "テキスト": "チーム作成ボタンを押して、新規登録フォームを開きます（button）",
+        "タイプ": "button"
+      },
+      {
+        "ID": "team-create-area",
+        "テキスト": "チーム登録モーダルの中でチーム名を入力し、登録ボタンを押してください（入力欄と登録ボタンを囲みます）。",
+        "タイプ": "button",
+        "requiredSelector": "#team-submit-button"
+      },
+      {
+        "ID": "team-first-row",
+        "テキスト": "登録が完了すると、一覧に追加されたチームが表示されます。確認してください。",
+        "タイプ": "normal"
+      }
+    ]
+  }
+]

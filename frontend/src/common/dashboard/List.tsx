@@ -33,7 +33,8 @@ import { Table, ScrollArea } from '@mantine/core';
 type Column<T> = {
   key: keyof T | string;
   label: string;
-  render?: (row: T) => React.ReactNode;
+  // render receives row and row index
+  render?: (row: T, rowIndex: number) => React.ReactNode;
   align?: 'left' | 'center' | 'right';
   // optional fixed width for the column (e.g. '120px' or 120)
   width?: string | number;
@@ -63,7 +64,12 @@ export const List = <T,>({
                 key={String(c.key) + '-col-' + idx}
                 style={
                   c.width
-                    ? { width: typeof c.width === 'number' ? `${c.width}px` : c.width }
+                    ? {
+                        width:
+                          typeof c.width === 'number'
+                            ? `${c.width}px`
+                            : c.width,
+                      }
                     : undefined
                 }
               />
@@ -73,7 +79,10 @@ export const List = <T,>({
           <Table.Thead>
             <Table.Tr>
               {columns.map((c) => (
-                <Table.Th key={String(c.key)} style={{ textAlign: c.align ?? 'left' }}>
+                <Table.Th
+                  key={String(c.key)}
+                  style={{ textAlign: c.align ?? 'left' }}
+                >
                   {c.label}
                 </Table.Th>
               ))}
@@ -86,10 +95,13 @@ export const List = <T,>({
                 {columns.map((c, ci) => (
                   <Table.Td
                     key={String(c.key) + '-cell-' + ci}
-                    style={{ textAlign: c.align ?? 'left', verticalAlign: 'middle' }}
+                    style={{
+                      textAlign: c.align ?? 'left',
+                      verticalAlign: 'middle',
+                    }}
                   >
                     {c.render ? (
-                      c.render(row)
+                      c.render(row, i)
                     ) : (
                       <div
                         style={{

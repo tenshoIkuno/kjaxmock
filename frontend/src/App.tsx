@@ -11,6 +11,8 @@ import { useEffect } from 'react';
 import { LoginPage } from './features/auth/Login';
 import OnboardingModal from '@/common/components/Onboarding/Onboarding';
 import ProductTourModal from '@/common/components/ProductTour/ProductTour';
+import { TourProvider } from '@/tour/TourProvider';
+import TourRunner from '@/tour/TourRunner';
 
 const queryClient = new QueryClient();
 
@@ -36,10 +38,13 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme} defaultColorScheme="auto">
         <Notifications position="top-right" autoClose={3000} />
-        <OnboardingModal />
-        <ProductTourModal />
-        {/* userが存在すればLayoutページ、そうでなければログインページを表示 */}
-        {!user ? <LoginPage /> : <Layout />}
+        <TourProvider>
+          <OnboardingModal />
+          <ProductTourModal />
+          <TourRunner />
+          {/* userが存在すればLayoutページ、そうでなければログインページを表示 */}
+          {!user ? <LoginPage /> : <Layout />}
+        </TourProvider>
       </MantineProvider>
     </QueryClientProvider>
   );

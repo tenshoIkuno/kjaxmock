@@ -47,7 +47,10 @@ export function NavbarOpene({
           onClick={toggleMain}
           aria-label={mainOpen ? '閉じる: 機能' : '開く: 機能'}
         >
-          <IconChevronDown size={ICON_SIZE} style={{ transform: `rotate(${mainOpen ? 0 : -90}deg)` }} />
+          <IconChevronDown
+            size={ICON_SIZE}
+            style={{ transform: `rotate(${mainOpen ? 0 : -90}deg)` }}
+          />
         </ActionIcon>
       </Group>
 
@@ -57,6 +60,13 @@ export function NavbarOpene({
             href ? (
               <NavLink
                 key={label}
+                id={
+                  label === '顧問先'
+                    ? 'nav-clients'
+                    : label === '設定'
+                      ? 'nav-settings'
+                      : undefined
+                }
                 label={label}
                 leftSection={<Icon size={ICON_SIZE} />}
                 component="a"
@@ -67,6 +77,13 @@ export function NavbarOpene({
             ) : (
               <NavLink
                 key={label}
+                id={
+                  label === '顧問先'
+                    ? 'nav-clients'
+                    : label === '設定'
+                      ? 'nav-settings'
+                      : undefined
+                }
                 label={label}
                 leftSection={<Icon size={ICON_SIZE} />}
                 component="button"

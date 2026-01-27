@@ -97,6 +97,137 @@ export function Header({ opened, onToggle }: HeaderProps) {
 
   const selectMenu = useCommonStore((s) => s.select);
 
+  // Product tour modal state
+  const [tourModalOpened, setTourModalOpened] = useState(false);
+  const [tourLoading, setTourLoading] = useState(false);
+  const [tourItems, setTourItems] = useState<any[] | null>(null);
+  const [tourList, setTourList] = useState<Array<{
+    name: string;
+    items: any[];
+  }> | null>(null);
+  const [selectedTourIndex, setSelectedTourIndex] = useState<number>(0);
+  const [tourErrors, setTourErrors] = useState<string[] | null>(null);
+
+  const findDuplicates = (items: any[]) => {
+    const map = new Map<string, number>();
+    for (const it of items) map.set(it.ID, (map.get(it.ID) ?? 0) + 1);
+    return Array.from(map.entries())
+      .filter(([, c]) => c > 1)
+      .map(([id]) => id);
+  };
+
+  const handleOpenTourModal = async () => {
+    setTourLoading(true);
+    setTourErrors(null);
+    setTourItems(null);
+    setTourList(null);
+    try {
+      const res = await fetch('/product-tour.json', { cache: 'no-store' });
+      if (!res.ok)
+        throw new Error(`failed to fetch /product-tour.json (${res.status})`);
+      const data = await res.json();
+      if (!data) {
+        setTourErrors([
+          `ツアーデータが見つかりません（/product-tour.json が空または配列ではありません）`,
+        ]);
+        setTourModalOpened(true);
+        return;
+      }
+      // support multiple formats:
+      // 1) legacy: data is an array of steps -> wrap into one tour
+      // 2) new: data is an array of { name, items } OR { name, steps }
+      // 3) new object: { tours: [...] }
+
+      let tours: Array<{ name: string; items: any[] }> = [];
+
+      if (Array.isArray(data)) {
+        // determine if elements look like steps (have ID) or tour entries (have name)
+        const first = data[0];
+        if (first && typeof first === 'object' && 'ID' in first) {
+          tours = [{ name: 'デフォルトツアー', items: data }];
+        } else if (
+          first &&
+          typeof first === 'object' &&
+          ('name' in first || 'items' in first || 'steps' in first)
+        ) {
+          // array of tours
+          tours = data.map((t: any, idx: number) => ({
+            name: t.name ?? `ツアー ${idx + 1}`,
+            items: t.items ?? t.steps ?? [],
+          }));
+        } else {
+          // unknown array shape
+          tours = [
+            {
+              name: 'デフォルトツアー',
+              items: Array.isArray(data) ? data : [],
+            },
+          ];
+        }
+      } else if (typeof data === 'object' && data !== null) {
+        if (Array.isArray((data as any).tours)) {
+          tours = (data as any).tours.map((t: any, idx: number) => ({
+            name: t.name ?? `ツアー ${idx + 1}`,
+            items: t.items ?? t.steps ?? [],
+          }));
+        } else if (Array.isArray((data as any).items)) {
+          tours = [
+            {
+              name: (data as any).name ?? 'デフォルトツアー',
+              items: (data as any).items,
+            },
+          ];
+        }
+      }
+
+      if (tours.length === 0) {
+        setTourErrors([
+          `ツアーデータの形式が不明です。/product-tour.json を確認してください。`,
+        ]);
+        setTourModalOpened(true);
+        return;
+      }
+
+      // basic duplicate check per tour (only checks IDs inside each tour)
+      const dupErrors: string[] = [];
+      tours.forEach((t) => {
+        const dups = findDuplicates(t.items ?? []);
+        if (dups.length > 0) dupErrors.push(`${t.name}: ${dups.join(', ')}`);
+      });
+      if (dupErrors.length > 0) {
+        setTourErrors([`JSON 内に重複する ID が見つかりました`, ...dupErrors]);
+        setTourModalOpened(true);
+        return;
+      }
+
+      // set tours and default selection
+      setTourList(tours);
+      setSelectedTourIndex(0);
+      // also set tourItems preview for first tour
+      setTourItems(tours[0].items ?? []);
+      setTourModalOpened(true);
+    } catch (err: any) {
+      setTourErrors([
+        `ツアーデータの読み込みに失敗しました: ${String(err.message ?? err)}`,
+      ]);
+      setTourModalOpened(true);
+    } finally {
+      setTourLoading(false);
+    }
+  };
+
+  const handleStartTourFromModal = () => {
+    const items = tourList
+      ? (tourList[selectedTourIndex]?.items ?? [])
+      : (tourItems ?? []);
+    if (!items || items.length === 0) return;
+    // dispatch the same event TourRunner listens to
+    window.dispatchEvent(
+      new CustomEvent('startTourFromJson', { detail: { items } }),
+    );
+    setTourModalOpened(false);
+  };
+
   return (
     <>
       <Group justify="space-between" p="md">
@@ -161,6 +292,14 @@ export function Header({ opened, onToggle }: HeaderProps) {
             </Button>
             <NotificationDrawer opened={notifOpened} onClose={closeNotif} />
           </Group>
+          {/* ツアー起動ボタン */}
+          <Button
+            variant="subtle"
+            onClick={handleOpenTourModal}
+            id="header-open-tour"
+          >
+            ツアー
+          </Button>
           {/* ユーザー情報＆メニュー */}
           <Menu shadow="md" width={220}>
             <Menu.Target>
@@ -291,6 +430,102 @@ export function Header({ opened, onToggle }: HeaderProps) {
             はい
           </Button>
         </Group>
+      </DashboardModal>
+
+      {/* Product Tour 確認モーダル */}
+      <DashboardModal
+        opened={tourModalOpened}
+        onClose={() => setTourModalOpened(false)}
+        title={
+          tourErrors ? 'ツアーの確認（警告あり）' : 'プロダクトツアーの確認'
+        }
+      >
+        {tourLoading ? (
+          <Text>読み込み中…</Text>
+        ) : (
+          <div>
+            {tourErrors && (
+              <div>
+                {tourErrors.map((e, i) => (
+                  <Text key={i} c="red" style={{ whiteSpace: 'pre-wrap' }}>
+                    {e}
+                  </Text>
+                ))}
+                <Text size="sm" c="dimmed" mt="sm">
+                  ※
+                  上記は警告です。必要な画面に移動すると自動的に要素が検出されます。
+                </Text>
+              </div>
+            )}
+
+            {tourItems ? (
+              <div>
+                <Text size="sm" mb="sm">
+                  以下のステップでツアーを開始します。
+                </Text>
+                {tourList && tourList.length > 1 && (
+                  <div style={{ marginBottom: 12 }}>
+                    <Text size="sm" mb={6}>
+                      実行するツアーを選択してください
+                    </Text>
+                    <Select
+                      data={tourList.map((t, i) => ({
+                        value: String(i),
+                        label: t.name,
+                      }))}
+                      value={String(selectedTourIndex)}
+                      onChange={(v) => {
+                        const idx = Number(v ?? 0);
+                        setSelectedTourIndex(idx);
+                        setTourItems(tourList[idx]?.items ?? []);
+                      }}
+                    />
+                  </div>
+                )}
+                <Table fontSize="sm" verticalSpacing="xs">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>ID</th>
+                      <th>テキスト</th>
+                      <th>タイプ</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tourItems.map((it: any, idx: number) => (
+                      <tr key={it.ID + idx}>
+                        <td>{idx + 1}</td>
+                        <td>{it.ID}</td>
+                        <td style={{ whiteSpace: 'pre-wrap' }}>
+                          {it.テキスト}
+                        </td>
+                        <td>{it.タイプ ?? it.type ?? 'normal'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+                <Group position="right" mt="md">
+                  <Button
+                    variant="default"
+                    onClick={() => setTourModalOpened(false)}
+                  >
+                    キャンセル
+                  </Button>
+                  <Button onClick={handleStartTourFromModal}>開始</Button>
+                </Group>
+              </div>
+            ) : (
+              <div>
+                <Text>ツアーデータがありません。</Text>
+                <Group position="right" mt="md">
+                  <Button onClick={() => setTourModalOpened(false)}>
+                    閉じる
+                  </Button>
+                </Group>
+              </div>
+            )}
+          </div>
+        )}
       </DashboardModal>
 
       {/* ヘッダーのグローバル顧問先選択モーダルは削除済み */}

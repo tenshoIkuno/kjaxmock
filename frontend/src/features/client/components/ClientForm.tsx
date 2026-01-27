@@ -65,28 +65,32 @@ export const ClientForm = ({
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <TextInput
-        label={
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span>顧問先名</span>
-            <TooltipHelpButton
-              tip="顧問先の正式名称を入力してください（50文字以内）"
-              size={20}
-            />
-          </div>
-        }
-        placeholder="顧問先名を入力"
-        {...form.getInputProps('name')}
-        required
-      />
-      <Button
-        mt="md"
-        type="submit"
-        loading={isPending}
-        disabled={isButtonDisabled}
-      >
-        {mode === 'create' ? '登録' : '更新'}
-      </Button>
+      <div id="client-create-area">
+        <TextInput
+          label={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>顧問先名</span>
+              <TooltipHelpButton
+                tip="顧問先の正式名称を入力してください（50文字以内）"
+                size={20}
+              />
+            </div>
+          }
+          placeholder="顧問先名を入力"
+          id="client-name-input"
+          {...form.getInputProps('name')}
+          required
+        />
+        <Button
+          mt="md"
+          id="client-submit-button"
+          type="submit"
+          loading={isPending}
+          disabled={isButtonDisabled}
+        >
+          {mode === 'create' ? '登録' : '更新'}
+        </Button>
+      </div>
     </form>
   );
 };
