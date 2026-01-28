@@ -202,9 +202,12 @@ export default function TourRunner() {
             if (elHost.matches && (elHost as any).matches(focusableSelector)) {
               toFocus = elHost;
             } else {
-              toFocus = (elHost.querySelector
-                ? (elHost.querySelector(focusableSelector) as HTMLElement | null)
-                : null) || null;
+              toFocus =
+                (elHost.querySelector
+                  ? (elHost.querySelector(
+                      focusableSelector,
+                    ) as HTMLElement | null)
+                  : null) || null;
             }
 
             if (!toFocus) {
