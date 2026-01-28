@@ -178,6 +178,10 @@ export default function TourRunner() {
         let el: Element | null = null;
         try {
           if (selector) el = document.querySelector(selector);
+        } catch (e) {
+          el = null;
+        }
+
         if (el) {
           // wait a short time to allow layout/tab-switch internal handlers to finish
           if (focusTimeoutId) window.clearTimeout(focusTimeoutId);
@@ -241,112 +245,78 @@ export default function TourRunner() {
               step.requiredAction &&
               (step.requiredAction as any).type === 'click'
             ) {
-            const focusableSelector =
-              'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-            let toFocus: HTMLElement | null = null;
-            if (elHost.matches && (elHost as any).matches(focusableSelector)) {
-              toFocus = elHost;
-            } else {
-              toFocus =
-                (elHost.querySelector
-                  ? (elHost.querySelector(
-                      focusableSelector,
-                    ) as HTMLElement | null)
-                  : null) || null;
-            }
+              const reqSel = (step.requiredAction as any).selector as
+                | string
+                | undefined;
+              const selectorToUse = reqSel ?? selector ?? null;
+              if (selectorToUse) {
+                const handler = (ev: Event) => {
+                  const t = ev.target as HTMLElement | null;
+                  try {
+                    // Debug: log click targets for troubleshooting
+                    console.debug('[TourRunner] click handler', {
+                      selector: selectorToUse,
+                      target: t,
+                      type: ev.type,
+                    });
 
-            if (!toFocus) {
-              // make the element temporarily focusable
-              const prev = elHost.getAttribute('tabindex');
-              elHost.setAttribute('tabindex', '-1');
-              elHost.focus({ preventScroll: true } as any);
-              if (prev === null) elHost.removeAttribute('tabindex');
-              else elHost.setAttribute('tabindex', prev);
-            } else {
-              toFocus.focus({ preventScroll: true } as any);
-            }
-          } catch (e) {
-            // ignore focus errors
-          }
-
-          // if requiredAction is click, attach listener that advances only when
-          // the element matching the required selector is clicked.
-          if (
-            step.requiredAction &&
-            (step.requiredAction as any).type === 'click'
-          ) {
-            const reqSel = (step.requiredAction as any).selector as
-              | string
-              | undefined;
-            const selectorToUse = reqSel ?? selector ?? null;
-            if (selectorToUse) {
-              const handler = (ev: Event) => {
-                const t = ev.target as HTMLElement | null;
-                try {
-                  // Debug: log click targets for troubleshooting
-                  console.debug('[TourRunner] click handler', {
-                    selector: selectorToUse,
-                    target: t,
-                    type: ev.type,
-                  });
-
-                  // Use composedPath if available to support shadow DOM / inner elements
-                  let path: EventTarget[] = [];
-                  if ((ev as any).composedPath) {
-                    path = (ev as any).composedPath();
-                  } else {
-                    // build fallback path by walking up from target
-                    let cur: HTMLElement | null = t as HTMLElement | null;
-                    while (cur) {
-                      path.push(cur);
-                      cur = cur.parentElement;
+                    // Use composedPath if available to support shadow DOM / inner elements
+                    let path: EventTarget[] = [];
+                    if ((ev as any).composedPath) {
+                      path = (ev as any).composedPath();
+                    } else {
+                      // build fallback path by walking up from target
+                      let cur: HTMLElement | null = t as HTMLElement | null;
+                      while (cur) {
+                        path.push(cur);
+                        cur = cur.parentElement;
+                      }
                     }
-                  }
 
-                  // check if any element in the path matches the selector
-                  let matched = false;
-                  if (selectorToUse) {
-                    for (const p of path) {
+                    // check if any element in the path matches the selector
+                    let matched = false;
+                    if (selectorToUse) {
+                      for (const p of path) {
+                        try {
+                          if (
+                            p &&
+                            (p as Element).matches &&
+                            (p as Element).matches(selectorToUse)
+                          ) {
+                            matched = true;
+                            break;
+                          }
+                        } catch (e) {
+                          // ignore invalid selector errors
+                        }
+                      }
+                    }
+
+                    console.debug('[TourRunner] click matched?', { matched });
+                    if (matched) {
+                      // if this is the last step, show the done modal instead of advancing
                       try {
-                        if (
-                          p &&
-                          (p as Element).matches &&
-                          (p as Element).matches(selectorToUse)
-                        ) {
-                          matched = true;
-                          break;
+                        const isLast =
+                          !!activeTour &&
+                          currentIndex === activeTour.steps.length - 1;
+                        if (isLast) {
+                          setShowDoneModal(true);
+                        } else {
+                          next();
                         }
                       } catch (e) {
-                        // ignore invalid selector errors
-                      }
-                    }
-                  }
-
-                  console.debug('[TourRunner] click matched?', { matched });
-                  if (matched) {
-                    // if this is the last step, show the done modal instead of advancing
-                    try {
-                      const isLast =
-                        !!activeTour &&
-                        currentIndex === activeTour.steps.length - 1;
-                      if (isLast) {
-                        setShowDoneModal(true);
-                      } else {
                         next();
                       }
-                    } catch (e) {
-                      next();
                     }
+                  } catch (e) {
+                    // ignore any errors in click handler
                   }
-                } catch (e) {
-                  // ignore any errors in click handler
-                }
-              };
-              document.addEventListener('click', handler, true);
-              clickListenerRef.current = () =>
-                document.removeEventListener('click', handler, true);
+                };
+                document.addEventListener('click', handler, true);
+                clickListenerRef.current = () =>
+                  document.removeEventListener('click', handler, true);
+              }
             }
-          }
           }, 120);
         } else {
           setRect(null);
