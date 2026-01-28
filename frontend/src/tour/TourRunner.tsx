@@ -212,12 +212,18 @@ export default function TourRunner() {
                 const focusableSelector =
                   'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
                 let toFocus: HTMLElement | null = null;
-                if (elHost.matches && (elHost as any).matches(focusableSelector)) {
+                if (
+                  elHost.matches &&
+                  (elHost as any).matches(focusableSelector)
+                ) {
                   toFocus = elHost;
                 } else {
-                  toFocus = (elHost.querySelector
-                    ? (elHost.querySelector(focusableSelector) as HTMLElement | null)
-                    : null) || null;
+                  toFocus =
+                    (elHost.querySelector
+                      ? (elHost.querySelector(
+                          focusableSelector,
+                        ) as HTMLElement | null)
+                      : null) || null;
                 }
 
                 if (!toFocus) {
