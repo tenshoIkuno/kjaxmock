@@ -193,6 +193,34 @@ export default function TourRunner() {
             });
           } catch {}
 
+          // try to focus the target (or a focusable child) to keep keyboard focus
+          try {
+            const elHost = el as HTMLElement;
+            const focusableSelector =
+              'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+            let toFocus: HTMLElement | null = null;
+            if (elHost.matches && (elHost as any).matches(focusableSelector)) {
+              toFocus = elHost;
+            } else {
+              toFocus = (elHost.querySelector
+                ? (elHost.querySelector(focusableSelector) as HTMLElement | null)
+                : null) || null;
+            }
+
+            if (!toFocus) {
+              // make the element temporarily focusable
+              const prev = elHost.getAttribute('tabindex');
+              elHost.setAttribute('tabindex', '-1');
+              elHost.focus({ preventScroll: true } as any);
+              if (prev === null) elHost.removeAttribute('tabindex');
+              else elHost.setAttribute('tabindex', prev);
+            } else {
+              toFocus.focus({ preventScroll: true } as any);
+            }
+          } catch (e) {
+            // ignore focus errors
+          }
+
           // if requiredAction is click, attach listener that advances only when
           // the element matching the required selector is clicked.
           if (
