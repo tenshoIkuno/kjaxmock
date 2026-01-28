@@ -155,6 +155,7 @@ export default function TourRunner() {
   React.useEffect(() => {
     let mounted = true;
     let pollId: number | null = null;
+    let focusTimeoutId: number | null = null;
 
     // clean previous click listener
     if (clickListenerRef.current) {
@@ -177,25 +178,69 @@ export default function TourRunner() {
         let el: Element | null = null;
         try {
           if (selector) el = document.querySelector(selector);
-        } catch (e) {
-          el = null;
-        }
         if (el) {
-          const r = (el as HTMLElement).getBoundingClientRect();
-          const top = r.top + window.scrollY;
-          const left = r.left + window.scrollX;
-          setRect({ top, left, width: r.width, height: r.height });
-          // ensure visible
-          try {
-            (el as HTMLElement).scrollIntoView({
-              block: 'center',
-              behavior: 'smooth',
-            });
-          } catch {}
+          // wait a short time to allow layout/tab-switch internal handlers to finish
+          if (focusTimeoutId) window.clearTimeout(focusTimeoutId);
+          focusTimeoutId = window.setTimeout(() => {
+            if (!mounted) return;
+            let currentEl: Element | null = null;
+            try {
+              if (selector) currentEl = document.querySelector(selector);
+            } catch (e) {
+              currentEl = el;
+            }
+            const targetEl = (currentEl as HTMLElement) || (el as HTMLElement);
+            try {
+              const r = (targetEl as HTMLElement).getBoundingClientRect();
+              const top = r.top + window.scrollY;
+              const left = r.left + window.scrollX;
+              // ensure visible
+              try {
+                (targetEl as HTMLElement).scrollIntoView({
+                  block: 'center',
+                  behavior: 'smooth',
+                });
+              } catch {}
 
-          // try to focus the target (or a focusable child) to keep keyboard focus
-          try {
-            const elHost = el as HTMLElement;
+              // try to focus the target (or a focusable child) to keep keyboard focus
+              try {
+                const elHost = targetEl as HTMLElement;
+                const focusableSelector =
+                  'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+                let toFocus: HTMLElement | null = null;
+                if (elHost.matches && (elHost as any).matches(focusableSelector)) {
+                  toFocus = elHost;
+                } else {
+                  toFocus = (elHost.querySelector
+                    ? (elHost.querySelector(focusableSelector) as HTMLElement | null)
+                    : null) || null;
+                }
+
+                if (!toFocus) {
+                  const prev = elHost.getAttribute('tabindex');
+                  elHost.setAttribute('tabindex', '-1');
+                  elHost.focus({ preventScroll: true } as any);
+                  if (prev === null) elHost.removeAttribute('tabindex');
+                  else elHost.setAttribute('tabindex', prev);
+                } else {
+                  toFocus.focus({ preventScroll: true } as any);
+                }
+              } catch (e) {
+                // ignore focus errors
+              }
+
+              setRect({ top, left, width: r.width, height: r.height });
+            } catch (e) {
+              // fallback: set rect to null
+              setRect(null);
+            }
+
+            // if requiredAction is click, attach listener that advances only when
+            // the element matching the required selector is clicked.
+            if (
+              step.requiredAction &&
+              (step.requiredAction as any).type === 'click'
+            ) {
             const focusableSelector =
               'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
             let toFocus: HTMLElement | null = null;
@@ -302,6 +347,7 @@ export default function TourRunner() {
                 document.removeEventListener('click', handler, true);
             }
           }
+          }, 120);
         } else {
           setRect(null);
           // keep polling until found
