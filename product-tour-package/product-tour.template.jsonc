@@ -1,0 +1,32 @@
+// product-tour JSON テンプレート（最小コメント）
+// `/product-tour.json` として配置するか、参考にしてください。
+[
+  {
+    "name": "顧問先登録ツアー",
+    "items": [
+      {
+        // ID: 要素の id 属性（ページ側に id を付与してください）
+        "ID": "client-name",
+        // ポップオーバーのタイトル
+        "title": "顧問先名を入力",
+        // 説明文（優先: text -> content -> description）
+        "text": "ここに顧問先名を入力してください。",
+        // type: 'button' は対象クリックで次に進むモード
+        "type": "normal"
+      },
+      {
+        "ID": "save-button",
+        "title": "保存してください",
+        "text": "保存ボタンを押すと次に進みます。",
+        "type": "button"
+      },
+      {
+        "ID": "company-list",
+        "title": "顧問先一覧",
+        "text": "顧問先が一覧で表示されます。",
+        // url を指定すると別ページへ自動遷移します（省略可）
+        "url": "/clients"
+      }
+    ]
+  }
+]

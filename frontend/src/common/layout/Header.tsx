@@ -107,6 +107,9 @@ export function Header({ opened, onToggle }: HeaderProps) {
   }> | null>(null);
   const [selectedTourIndex, setSelectedTourIndex] = useState<number>(0);
   const [tourErrors, setTourErrors] = useState<string[] | null>(null);
+  const [nextStepTours, setNextStepTours] = useState<Array<{
+    name: string;
+  }> | null>(null);
 
   const findDuplicates = (items: any[]) => {
     const map = new Map<string, number>();
@@ -228,6 +231,47 @@ export function Header({ opened, onToggle }: HeaderProps) {
     setTourModalOpened(false);
   };
 
+  // load nextstepjs tours for the NextStep menu when requested
+  const handleOpenNextStepMenu = async () => {
+    if (nextStepTours) return; // already loaded
+    try {
+      const res = await fetch('/product-tour.json', { cache: 'no-store' });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!data) return;
+      let tours: Array<{ name: string }> = [];
+      if (Array.isArray(data)) {
+        const first = data[0];
+        if (
+          first &&
+          typeof first === 'object' &&
+          ('name' in first || 'items' in first || 'steps' in first)
+        ) {
+          tours = data.map((t: any) => ({ name: t.name ?? 'Unnamed Tour' }));
+        } else if (first && typeof first === 'object' && 'ID' in first) {
+          tours = [{ name: 'デフォルトツアー' }];
+        }
+      } else if (typeof data === 'object' && data !== null) {
+        if (Array.isArray((data as any).tours)) {
+          tours = (data as any).tours.map((t: any) => ({
+            name: t.name ?? 'Unnamed Tour',
+          }));
+        } else if (Array.isArray((data as any).items)) {
+          tours = [{ name: (data as any).name ?? 'デフォルトツアー' }];
+        }
+      }
+      setNextStepTours(tours);
+    } catch (e) {
+      // ignore
+    }
+  };
+
+  const handleStartNextStep = (name: string) => {
+    window.dispatchEvent(
+      new CustomEvent('startTourFromJson', { detail: { name } }),
+    );
+  };
+
   return (
     <>
       <Group justify="space-between" p="md">
@@ -300,6 +344,30 @@ export function Header({ opened, onToggle }: HeaderProps) {
           >
             ツアー
           </Button>
+          {/* NextStep (nextstepjs) 用ツアー開始メニュー */}
+          <Menu shadow="md" width={200} onOpen={handleOpenNextStepMenu}>
+            <Menu.Target>
+              <Button variant="subtle" id="header-open-nextstep-tour">
+                NextStep ツアー
+              </Button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              {nextStepTours === null ? (
+                <Menu.Label>ロード中...</Menu.Label>
+              ) : nextStepTours.length === 0 ? (
+                <Menu.Label>ツアーが見つかりません</Menu.Label>
+              ) : (
+                nextStepTours.map((t) => (
+                  <Menu.Item
+                    key={t.name}
+                    onClick={() => handleStartNextStep(t.name)}
+                  >
+                    {t.name}
+                  </Menu.Item>
+                ))
+              )}
+            </Menu.Dropdown>
+          </Menu>
           {/* ユーザー情報＆メニュー */}
           <Menu shadow="md" width={220}>
             <Menu.Target>

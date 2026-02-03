@@ -4,24 +4,24 @@
     "items": [
       {
         "ID": "nav-clients",
-        "テキスト": "まずは、サイドメニューから「顧問先」を開きましょう。",
-        "タイプ": "button"
+        "text": "まずは、サイドメニューから「顧問先」を開きましょう。",
+        "type": "button"
       },
       {
         "ID": "client-register-button",
-        "テキスト": "「顧問先登録」をクリックして、新しい顧問先を追加します。",
-        "タイプ": "button"
+        "text": "「顧問先登録」をクリックして、新しい顧問先を追加します。",
+        "type": "button"
       },
       {
         "ID": "client-create-area",
-        "テキスト": "顧問先名を入力し、「登録」を押してください。",
-        "タイプ": "button",
+        "text": "顧問先名を入力し、「登録」を押してください。",
+        "type": "button",
         "requiredSelector": "#client-submit-button"
       },
       {
         "ID": "client-first-row",
-        "テキスト": "顧問先が一覧に追加されました。正しく登録されているか確認しましょう。",
-        "タイプ": "normal"
+        "text": "顧問先が一覧に追加されました。正しく登録されているか確認しましょう。",
+        "type": "normal"
       }
     ]
   },
@@ -30,29 +30,29 @@
     "items": [
       {
         "ID": "nav-settings",
-        "テキスト": "次に、サイドメニューの「設定」を開きます。",
-        "タイプ": "button"
+        "text": "次に、サイドメニューの「設定」を開きます。",
+        "type": "button"
       },
       {
         "ID": "settings-tab-teams",
-        "テキスト": "設定画面で「チーム」タブを選択してください。",
-        "タイプ": "button"
+        "text": "設定画面で「チーム」タブを選択してください。",
+        "type": "button"
       },
       {
         "ID": "team-create-button",
-        "テキスト": "「チーム作成」をクリックして、新しいチームを作成します。",
-        "タイプ": "button"
+        "text": "「チーム作成」をクリックして、新しいチームを作成します。",
+        "type": "button"
       },
       {
         "ID": "team-create-area",
-        "テキスト": "チーム名を入力し、「登録」を押してください。",
-        "タイプ": "button",
+        "text": "チーム名を入力し、「登録」を押してください。",
+        "type": "button",
         "requiredSelector": "#team-submit-button"
       },
       {
         "ID": "team-first-row",
-        "テキスト": "チームが一覧に追加されました。登録内容を確認しましょう。",
-        "タイプ": "normal"
+        "text": "チームが一覧に追加されました。登録内容を確認しましょう。",
+        "type": "normal"
       }
     ]
   }

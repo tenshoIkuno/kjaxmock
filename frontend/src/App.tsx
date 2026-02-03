@@ -13,6 +13,7 @@ import OnboardingModal from '@/common/components/Onboarding/Onboarding';
 import ProductTourModal from '@/common/components/ProductTour/ProductTour';
 import { TourProvider } from '@/tour/TourProvider';
 import TourRunner from '@/tour/TourRunner';
+import NextStepAdapter from '@/tour/NextStepAdapter';
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ function App() {
         <TourProvider>
           <OnboardingModal />
           <ProductTourModal />
+          <NextStepAdapter />
           <TourRunner />
           {/* userが存在すればLayoutページ、そうでなければログインページを表示 */}
           {!user ? <LoginPage /> : <Layout />}

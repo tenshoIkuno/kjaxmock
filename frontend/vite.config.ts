@@ -9,6 +9,11 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      // shim next/navigation for nextstepjs when building with Vite
+      'next/navigation': path.resolve(
+        __dirname,
+        './src/shims/next-navigation.ts',
+      ),
     },
   },
   server: {
